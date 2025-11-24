@@ -6,24 +6,40 @@ config:
 classDiagram
     Usuario --> FavoritoNM : Tiene
     FavoritoNM --> Industria
-    Industria --> RelevantNews : Tiene
-    Industria --> Tipo_Industria
-    Tipo --> Tipo_Industria
     Usuario --> Simulacion : Crea
     Simulacion --> Industria
     Simulacion --> Grafica : Obtenemos
+    Industria --> RelevantNews : Tiene
+    Industria --> Tipo_Industria
+    Tipo --> Tipo_Industria
+    Usuario --> Comentario : Escribe
+    Industria --> Comentario : Tiene
+
     note for Industria "Ej: La Industria Petróleo Crudo
                         es del tipo Materia Prima, pero
                         también es del tipo Energía"
 
-namespace EspacioUsuario{
-    class Usuario{
+namespace InteraccionesUsuario{
+    class Comentario{
+        +int id_comentario
         +int id_usuario
-        +String nombre
-        +String tipo_usuario
-        +double dineroSimulado
-        +Deposit(dinero)
-        +Withdraw(dinero)
+        +int id_industria
+        +String contenido
+        +Date fecha_publicacion
+    }
+
+    class Grafica{
+        +int id_grafica
+        +String Datos_grafica
+        +GetGraficaFormat()
+    }
+    class RelevantNews{
+        +int id_news
+        +int id_industria
+        +String titulo
+        +String url
+        +Date fecha_publicacion
+        +GetNewsFromAPI()
     }
     class Simulacion{
         +int id_simulacion
@@ -40,6 +56,17 @@ namespace EspacioUsuario{
         +MostrarFavLastDate(Date)
     }
 }
+
+namespace EspacioUsuario{
+    class Usuario{
+        +int id_usuario
+        +String nombre
+        +String tipo_usuario
+        +double dineroSimulado
+        +Deposit(dinero)
+        +Withdraw(dinero)
+    }
+}
 namespace Industrias{
     class Industria{
         +int id_industria
@@ -52,7 +79,7 @@ namespace Industrias{
         +GetMajorIndices(id_industria)
     }
     class Tipo_Industria{
-        +id_industria
+        +int id_industria
         +int id_tipo
     }
 
@@ -61,17 +88,4 @@ namespace Industrias{
         +String descripcion
         +GetDatosGenerales(id_industria)
     }
-}
-class Grafica{
-    +int id_grafica
-    +String Datos_grafica
-    +GetGraficaFormat()
-}
-class RelevantNews{
-    +int id_news
-    +int id_industria
-    +String titulo
-    +String url
-    +Date fecha_publicacion
-    +GetNewsFromAPI()
 }
