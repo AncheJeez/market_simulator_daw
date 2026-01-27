@@ -3,16 +3,22 @@ Proyecto DAW
 
 Tecnologías a usar:
 
-Front -> Typescript con React (con recharts para las gráficas) y Sass
+Frontend
+Typescript con React (con recharts para las gráficas) y Sass
 
-Back -> Springboot
+Backend
+Springboot
 
-API -> [Alpha Vantage] (https://www.alphavantage.co/documentation/ "Alpha Vantage")
+API
+> [Alpha Vantage] (https://www.alphavantage.co/documentation/ "Alpha Vantage")
 
-Librerías -> ???
+Librerías
+???
 
-Base de datos -> Postgre dockerizado (testeo en local y luego desplegado en el servidor)
+Base de datos
+Postgre dockerizado (testeo en local y luego desplegado en el servidor)
 
-Despliegue -> ???
+Despliegue
+???
 
 ![alt text](https://github.com/AncheJeez/ProyectoIntegrado/blob/main/resources/DiagramaEntidadRelacionMermaid.png)
