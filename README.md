@@ -20,7 +20,7 @@ Base de datos -> Postgre dockerizado (testeo en local y luego desplegado en el s
 
 Despliegue -> Frontend en Vercel?? Backend en fly.io??
 
-![alt text](https://github.com/AncheJeez/ProyectoIntegrado/blob/main/fichero_mock-up/DiagramaEntidadRelacionMermaid.png)
+![alt text](https://github.com/AncheJeez/ProyectoIntegrado/blob/main/mock-up/DiagramaEntidadRelacionMermaid.png)
 
 npx create-react-app .
 npm install sass --save-dev
