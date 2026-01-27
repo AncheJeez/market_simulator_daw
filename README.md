@@ -22,7 +22,10 @@ Despliegue -> Frontend en Vercel?? Backend en fly.io??
 
 ![alt text](https://github.com/AncheJeez/ProyectoIntegrado/blob/main/mock-up/DiagramaEntidadRelacionMermaid.png)
 
-npx create-react-app .
+npx create-react-app front-end --template typescript
 npm install sass --save-dev
+npm install bootstrap
+(opcional npm install react-bootstrap)
 npm install react-router-dom
+npm install @types/react-router-dom --save-dev
 npm start
