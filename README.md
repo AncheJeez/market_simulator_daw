@@ -10,11 +10,11 @@ Backend -> Springboot
 API -> [Alpha Vantage](https://www.alphavantage.co/documentation/ "Alpha Vantage")
 
 Librerías
-> spring-boot-starter-web (Para API REST)
-> spring-boot-starter-data-jpa (puente entre Java y PostreSQL)
-> postgresql (driver JDBC para hablar con PostgreSQL)
-> spring-boot-starter-validation (herramienta de validación para las classes)
-> springdoc-openapi-ui (testeo de la API)
+> spring-boot-starter-web (Para API REST) <br>
+> spring-boot-starter-data-jpa (puente entre Java y PostreSQL) <br>
+> postgresql (driver JDBC para hablar con PostgreSQL) <br>
+> spring-boot-starter-validation (herramienta de validación para las classes) <br>
+> springdoc-openapi-ui (testeo de la API) <br>
 
 Base de datos -> Postgre dockerizado (testeo en local y luego desplegado en el servidor)
 
