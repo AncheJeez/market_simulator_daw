@@ -30,3 +30,20 @@ Front-end
 > npm install react-router-dom <br>
 > npm install @types/react-router-dom --save-dev <br>
 > npm start <br>
+
+Back-end
+> cd back-end/docker
+> docker compose up
+> **(en otra terminal)**
+> docker ps -a
+> docker exec -it trading_db psql -U admin -d trading_simulator
+> \l
+> \c trading_simulator
+> \dt
+> **(si se quiere borrar y empezar de nuevo la db)
+> docker ps -a
+> docker rm -f [la id de la imagen]
+> docker images
+> docker rmi postgres:16
+> **(O también se puede ir a la direccion de docker-compose.yml y meter)**
+> docker compose down -v
