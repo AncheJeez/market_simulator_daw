@@ -7,6 +7,9 @@ Una vez lo estén haga lo siguiente desde la raíz del proyecto:<br>
 
 y luego acceda a [la página](http://localhost:5173)<br>
 
+Si no tiene una imagen png o jpg a mano, puede introducir la que está en:
+> cd /front-end/src/assets/default-user.jpg
+
 No hay datos hardcodeados, así que necesita insertar al menos estos.<br>
 Abra un terminal nuevo e introduzca en la raíz del proyecto:<br>
 > docker compose exec postgres psql -U admin -d trading_simulator<br>
