@@ -7,11 +7,15 @@ Una vez lo estén haga lo siguiente desde la raíz del proyecto:<br>
 
 y luego acceda a [la página](http://localhost:5173)<br>
 
-Hay datos que son necesarios insertar en la base de datos para que funcione propiamente.<br>
-Abra un terminal nuevoe introduzca en la raíz del proyecto:<br>
+No hay datos hardcodeados, así que necesita insertar al menos estos.<br>
+Abra un terminal nuevo e introduzca en la raíz del proyecto:<br>
 > docker compose exec postgres psql -U admin -d trading_simulator<br>
 
-E introduzca los inserts de symbols.sql<br>
+E introduzca los inserts de symbols.sql (está en la raíz del proyecto)<br>
+
+Para utilizar la API alphavantage necesita entrar a esta [página](https://www.alphavantage.co/support/#api-key) y solicitar una API key.<br>
+Con esa key insertela en las opciones del perfil de usuario en la propia aplicación.<br>
+
 
 Si quiere reiniciar de forma segura el docker o una parte de ella o buildear una parte concreta:<br>
 > docker compose restart backend <br>
@@ -20,13 +24,6 @@ Si quiere reiniciar de forma segura el docker o una parte de ella o buildear una
 > docker compose up --build -d frontend <br>
 > docker compose down -v <br>
 > docker compose up --build <br>
-
-Para utilizar la API alphavantage necesita entrar a esta [página](https://www.alphavantage.co/support/#api-key) y solicitar una API key.<br>
-Con esa key insertela en las opciones del perfil de usuario en la propia aplicación.<br>
-
-
-Si quiere insertar datos manualmente a la base de datos postgre:<br>
-> docker compose exec postgres psql -U admin -d trading_simulator<br>
 
 Si quiere ejecutar el backend independientemente:<br>
 > cd back-end <br>
