@@ -32,18 +32,18 @@ Front-end
 > npm start <br>
 
 Back-end
-> cd back-end/docker
-> docker compose up
-> **(en otra terminal)**
-> docker ps -a
-> docker exec -it trading_db psql -U admin -d trading_simulator
-> \l
-> \c trading_simulator
-> \dt
-> **(si se quiere borrar y empezar de nuevo la db)
-> docker ps -a
-> docker rm -f [la id de la imagen]
-> docker images
-> docker rmi postgres:16
-> **(O también se puede ir a la direccion de docker-compose.yml y meter)**
-> docker compose down -v
+> cd back-end/docker <br>
+> docker compose up <br>
+> **(en otra terminal)** <br>
+> docker ps -a <br>
+> docker exec -it trading_db psql -U admin -d trading_simulator <br>
+> \l <br>
+> \c trading_simulator <br>
+> \dt <br>
+> **(si se quiere borrar y empezar de nuevo la db) <br>
+> docker ps -a <br>
+> docker rm -f [la id de la imagen] <br>
+> docker images <br>
+> docker rmi postgres:16 <br>
+> **(O también se puede ir a la direccion de docker-compose.yml y meter)** <br>
+> docker compose down -v <br>
