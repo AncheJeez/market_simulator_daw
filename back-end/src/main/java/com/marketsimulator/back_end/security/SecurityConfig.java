@@ -12,7 +12,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 public class SecurityConfig {
@@ -20,7 +19,7 @@ public class SecurityConfig {
 	@Order(1)
 	public SecurityFilterChain authSecurityFilterChain(HttpSecurity http) throws Exception {
 		http
-			.securityMatcher(new AntPathRequestMatcher("/api/auth/**"))
+			.securityMatcher("/api/auth/**")
 			.csrf(csrf -> csrf.disable())
 			.cors(Customizer.withDefaults())
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
