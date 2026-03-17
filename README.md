@@ -2,10 +2,16 @@
 Proyecto DAW
 
 Para ejecutar este proyecto se necesita Git y Docker previamente instalados.<br>
-Una vez lo estén haga lo siguiente:<br>
+Una vez lo estén haga lo siguiente desde la raíz del proyecto:<br>
 > docker compose up --build <br>
 
 y luego acceda a [la página](http://localhost:5173)<br>
+
+Hay datos que son necesarios insertar en la base de datos para que funcione propiamente.<br>
+Abra un terminal nuevoe introduzca en la raíz del proyecto:<br>
+> docker compose exec postgres psql -U admin -d trading_simulator<br>
+
+E introduzca los inserts de symbols.sql<br>
 
 Si quiere reiniciar de forma segura el docker o una parte de ella o buildear una parte concreta:<br>
 > docker compose restart backend <br>
