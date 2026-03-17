@@ -7,7 +7,11 @@ Una vez lo estén haga lo siguiente:<br>
 
 y luego acceda a [la página](http://localhost:5173)<br>
 
-Si quiere reiniciar de forma segura el docker:<br>
+Si quiere reiniciar de forma segura el docker o una parte de ella o buildear una parte concreta:<br>
+> docker compose restart backend <br>
+> docker compose restart frontend <br>
+> docker compose up --build -d backend <br>
+> docker compose up --build -d frontend <br>
 > docker compose down -v <br>
 > docker compose up --build <br>
 
@@ -32,13 +36,14 @@ Si quiere ejecutar el frontend independietemente:<br>
 > npm run dev <br>
 
 TODO:<br>
+- Ahora mismo, el usuario tiene que poner una imagen de perfil, no es opcional <- fix
+- Solo los admis deberian poder registrar otros roles otros de usuario normal.
 - Simulaciones de trading de usuario y que estas se guarden en cada perfil.
 - Portfolio enseñando esas simulacionones.
 - API de noticias, con topic en financias.
 - Cambio de tema, light, dark.
 - Cambio de idiom, EN - ES.
 - Añadir iconos SVG.
-- Solo los admis podrán registrar otros roles otros de usuario normal.
 - Pantalla de administración (solo lo verán los admins)
 
 Tecnologías usadas:
