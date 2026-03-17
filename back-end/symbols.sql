@@ -1,0 +1,22 @@
+INSERT INTO "symbol" (ticker, name) VALUES
+('AAPL','Apple Inc.'),
+('MSFT','Microsoft Corporation'),
+('GOOGL','Alphabet Inc.'),
+('AMZN','Amazon.com, Inc.'),
+('NVDA','NVIDIA Corporation'),
+('META','Meta Platforms, Inc.'),
+('TSLA','Tesla, Inc.'),
+('ORCL','Oracle Corporation'),
+('INTC','Intel Corporation'),
+('AMD','Advanced Micro Devices, Inc.'),
+('NFLX','Netflix, Inc.'),
+('ADBE','Adobe Inc.'),
+('CSCO','Cisco Systems, Inc.'),
+('CRM','Salesforce, Inc.'),
+('QCOM','QUALCOMM Incorporated'),
+('AVGO','Broadcom Inc.'),
+('TXN','Texas Instruments Incorporated'),
+('IBM','International Business Machines'),
+('JPM','JPMorgan Chase & Co.'),
+('BAC','Bank of America Corporation')
+ON CONFLICT (ticker) DO NOTHING;

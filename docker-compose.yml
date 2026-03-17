@@ -1,0 +1,48 @@
+name: trading-simulator
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: trading-simulator-db
+    restart: always
+    environment:
+      POSTGRES_DB: trading_simulator
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    command: postgres -c listen_addresses='*'
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./back-end/testing-symbols.sql:/docker-entrypoint-initdb.d/02-symbols.sql
+
+  backend:
+    build:
+      context: ./back-end
+      dockerfile: Dockerfile
+    container_name: trading-simulator-backend
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/trading_simulator
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin123
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile.dev
+    container_name: trading-simulator-frontend
+    working_dir: /app
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./front-end:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
