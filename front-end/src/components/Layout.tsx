@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import Footer from './Footer'
 import type { User } from '../utils/auth'
+import defaultUser from '../assets/default-user.jpg'
 
 type LayoutProps = {
   children: ReactNode
@@ -24,7 +25,7 @@ function Layout({ children, showSidebar, onLogout, currentUser }: LayoutProps) {
 
   const profileUrl = useMemo(() => {
     if (!currentUser?.profilePicturePath) {
-      return null
+      return defaultUser
     }
     const normalized = currentUser.profilePicturePath.replace(/^\/+/, '')
     return `http://localhost:8080/${normalized}`
@@ -62,22 +63,13 @@ function Layout({ children, showSidebar, onLogout, currentUser }: LayoutProps) {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  {profileUrl ? (
-                    <img
-                      src={profileUrl}
-                      alt="Profile"
-                      width="44"
-                      height="44"
-                      className="rounded border"
-                    />
-                  ) : (
-                    <div
-                      className="rounded border d-flex align-items-center justify-content-center"
-                      style={{ width: 44, height: 44 }}
-                    >
-                      <span className="text-muted small">U</span>
-                    </div>
-                  )}
+                  <img
+                    src={profileUrl}
+                    alt="Profile"
+                    width="44"
+                    height="44"
+                    className="rounded border"
+                  />
                 </button>
                 <ul className="dropdown-menu dropdown-menu-end">
                   <li>

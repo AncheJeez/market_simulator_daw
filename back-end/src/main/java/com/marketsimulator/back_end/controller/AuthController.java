@@ -49,7 +49,7 @@ public class AuthController {
 		@RequestParam("userName") String userName,
 		@RequestParam("userType") UserType userType,
 		@RequestParam("password") String password,
-		@RequestParam("profilePicture") MultipartFile profilePicture) {
+		@RequestParam(value = "profilePicture", required = false) MultipartFile profilePicture) {
 		if (isBlank(firstName) || isBlank(secondName) || isBlank(userName) || isBlank(password)) {
 			return ResponseEntity.badRequest().body(Map.of("message", "All fields are required."));
 		}

@@ -23,12 +23,7 @@ function Register() {
       return
     }
 
-    if (!profilePicture) {
-      setMessage('Profile picture is required.')
-      return
-    }
-
-    if (profilePicture.size > 5 * 1024 * 1024) {
+    if (profilePicture && profilePicture.size > 5 * 1024 * 1024) {
       setMessage('Profile picture must be under 5MB.')
       return
     }
@@ -39,7 +34,9 @@ function Register() {
     formData.append('userName', userName)
     formData.append('userType', userType)
     formData.append('password', password)
-    formData.append('profilePicture', profilePicture)
+    if (profilePicture) {
+      formData.append('profilePicture', profilePicture)
+    }
 
     setLoading(true)
     try {
@@ -143,7 +140,6 @@ function Register() {
                   type="file"
                   accept="image/png,image/jpeg"
                   onChange={(event) => setProfilePicture(event.target.files?.[0] || null)}
-                  required
                 />
               </label>
               <button className="btn btn-dark" type="submit" disabled={loading}>

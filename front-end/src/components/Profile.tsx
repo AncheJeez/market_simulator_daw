@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import type { User } from '../utils/auth'
+import defaultUser from '../assets/default-user.jpg'
 
 type ProfileProps = {
   user: User
@@ -15,6 +16,11 @@ function Profile({ user, onUpdate }: ProfileProps) {
   const [profilePicture, setProfilePicture] = useState<File | null>(null)
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
+  const rawPath = user?.profilePicturePath || ''
+  const normalizedPath = rawPath.replace(/^\/+/, '')
+  const profileUrl = normalizedPath
+    ? `http://localhost:8080/${normalizedPath}`
+    : defaultUser
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -67,7 +73,16 @@ function Profile({ user, onUpdate }: ProfileProps) {
                 <h1 className="h3 mb-1">Profile</h1>
                 <p className="text-muted mb-0">Update your details.</p>
               </div>
-              <span className="badge bg-secondary">{user?.userType}</span>
+              <div className="d-flex align-items-center gap-3">
+                <span className="badge bg-secondary">{user?.userType}</span>
+                <img
+                  src={profileUrl}
+                  alt="Profile"
+                  width="56"
+                  height="56"
+                  className="rounded-circle border"
+                />
+              </div>
             </div>
             <div className="mt-4">
               <div className="mb-3">

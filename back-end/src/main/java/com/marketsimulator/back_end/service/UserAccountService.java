@@ -41,9 +41,12 @@ public class UserAccountService {
 		String passwordHash = passwordEncoder.encode(rawPassword);
 		UserAccount user = new UserAccount(firstName, secondName, userName, userType, passwordHash, null);
 		UserAccount saved = repository.save(user);
-		String profilePath = storeProfilePicture(profilePicture, saved.getId(), saved.getUserName(), null);
-		saved.setProfilePicturePath(profilePath);
-		return repository.save(saved);
+		if (profilePicture != null && !profilePicture.isEmpty()) {
+			String profilePath = storeProfilePicture(profilePicture, saved.getId(), saved.getUserName(), null);
+			saved.setProfilePicturePath(profilePath);
+			return repository.save(saved);
+		}
+		return saved;
 	}
 
 	public Optional<UserAccount> authenticate(String userName, String rawPassword) {
