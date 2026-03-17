@@ -31,8 +31,17 @@ Si quiere ejecutar el frontend independietemente:<br>
 > npm i react-chartjs-2 chart.js <br>
 > npm run dev <br>
 
+TODO:<br>
+- Simulaciones de trading de usuario y que estas se guarden en cada perfil.
+- Portfolio enseñando esas simulacionones.
+- API de noticias, con topic en financias.
+- Cambio de tema, light, dark.
+- Cambio de idiom, EN - ES.
+- Añadir iconos SVG.
+- Solo los admis podrán registrar otros roles otros de usuario normal.
+- Pantalla de administración (solo lo verán los admins)
 
-Tecnologías a usar:
+Tecnologías usadas:
 
 Frontend -> Typescript con React y Bootstrap (multiples dependencias)
 
