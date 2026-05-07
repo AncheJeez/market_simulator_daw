@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { apiUrl } from '../utils/api'
 
 
 type StoredSymbol = {
@@ -20,7 +21,7 @@ function StoredMarket() {
 
   useEffect(() => {
     const load = async () => {
-      const response = await fetch('http://localhost:8080/api/market/stored', {
+      const response = await fetch(apiUrl('/api/market/stored'), {
         credentials: 'include',
       })
       if (response.ok) {

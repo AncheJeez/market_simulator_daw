@@ -1,63 +1,103 @@
 # ProyectoIntegrado
-Proyecto DAW
 
-Para ejecutar este proyecto se necesita Git y Docker previamente instalados.<br>
-Una vez lo estén haga lo siguiente desde la raíz del proyecto:<br>
-> docker compose up --build <br>
+Proyecto DAW.
 
-y luego acceda a [la página](http://localhost:5173)<br>
+## Local development
 
-Si no tiene una imagen png o jpg a mano, puede introducir la que está en:
-> cd /front-end/src/assets/default-user.jpg
+Use Docker only for PostgreSQL:
 
-No hay datos hardcodeados, así que necesita insertar al menos estos.<br>
-Abra un terminal nuevo e introduzca en la raíz del proyecto:<br>
-> docker compose exec postgres psql -U admin -d trading_simulator<br>
+```powershell
+docker compose -f docker-compose.local.yml up -d
+```
 
-E introduzca los inserts de symbols.sql (está en la raíz del proyecto)<br>
+Run the backend locally:
 
-Para utilizar la API alphavantage necesita entrar a esta [página](https://www.alphavantage.co/support/#api-key) y solicitar una API key.<br>
-Con esa key insertela en las opciones del perfil de usuario en la propia aplicación.<br>
+```powershell
+cd back-end
+.\mvnw.cmd spring-boot:run
+```
 
+Run the frontend locally:
 
-Si quiere reiniciar de forma segura el docker o una parte de ella o buildear una parte concreta:<br>
-> docker compose restart backend <br>
-> docker compose restart frontend <br>
-> docker compose up --build -d backend <br>
-> docker compose up --build -d frontend <br>
-> docker compose down -v <br>
-> docker compose up --build <br>
+```powershell
+cd front-end
+npm install
+npm run dev
+```
 
-Si quiere ejecutar el backend independientemente:<br>
-> cd back-end <br>
-> npm spring-boot:run <br>
+Open the app at:
 
-Si quiere ejecutar el frontend independietemente:<br>
-> cd front-end <br>
-> npm install <br>
-> npm i react-router-dom <br>
-> npm i react-pro-sidebar <br>
-> npm i reagraph <br>
-> npm i react-chartjs-2 chart.js <br>
-> npm run dev <br>
+```text
+http://localhost:5173
+```
 
-TODO:<br>
-- Ahora mismo, el usuario tiene que poner una imagen de perfil, no es opcional <- fix
-- Solo los admis deberian poder registrar otros roles otros de usuario normal.
-- Simulaciones de trading de usuario y que estas se guarden en cada perfil.
-- Portfolio enseñando esas simulacionones.
-- API de noticias, con topic en financias.
-- Cambio de tema, light, dark.
-- Cambio de idiom, EN - ES.
-- Añadir iconos SVG.
-- Pantalla de administración (solo lo verán los admins)
+In local development the frontend uses Vite proxy rules, so `/api` and `/uploads` are forwarded to `http://localhost:8080`.
 
-Tecnologías usadas:
+## Server deployment
 
-Frontend -> Typescript con React y Bootstrap (multiples dependencias)
+Use Docker for PostgreSQL, backend, and frontend:
 
-Backend -> Springboot
+```powershell
+docker compose up --build -d
+```
 
-API -> [Alpha Vantage](https://www.alphavantage.co/documentation/ "Alpha Vantage")
+Open the app at:
 
-![alt text](https://github.com/AncheJeez/ProyectoIntegrado/blob/main/mock-up/DiagramaEntidadRelacionMermaid.png)
+```text
+http://localhost
+```
+
+The production frontend is served by nginx. It serves the React build and proxies `/api` and `/uploads` to the backend container.
+
+Useful server commands:
+
+```powershell
+docker compose restart backend
+docker compose restart frontend
+docker compose up --build -d backend
+docker compose up --build -d frontend
+docker compose down
+docker compose down -v
+```
+
+## Database
+
+The PostgreSQL credentials are:
+
+```text
+Database: trading_simulator
+User: admin
+Password: admin123
+```
+
+The compose files initialize symbols from:
+
+```text
+back-end/testing-symbols.sql
+```
+
+To connect manually:
+
+```powershell
+docker compose exec postgres psql -U admin -d trading_simulator
+```
+
+For local development with `docker-compose.local.yml`:
+
+```powershell
+docker compose -f docker-compose.local.yml exec postgres psql -U admin -d trading_simulator
+```
+
+## Market data API
+
+The app uses Yahoo Finance through the backend. No API key is required.
+
+## Technologies
+
+Frontend: TypeScript, React, Bootstrap, Vite.
+
+Backend: Spring Boot.
+
+Database: PostgreSQL.
+
+![Entity relationship diagram](https://github.com/AncheJeez/ProyectoIntegrado/blob/main/mock-up/DiagramaEntidadRelacionMermaid.png)

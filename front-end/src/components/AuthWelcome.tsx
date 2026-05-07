@@ -1,5 +1,6 @@
 import type { User } from '../utils/auth'
 import defaultUser from '../assets/default-user.jpg'
+import { assetUrl } from '../utils/api'
 
 type AuthWelcomeProps = {
   user: User
@@ -8,9 +9,7 @@ type AuthWelcomeProps = {
 function AuthWelcome({ user }: AuthWelcomeProps) {
   const rawPath = user?.profilePicturePath || ''
   const normalizedPath = rawPath.replace(/^\/+/, '')
-  const profileUrl = normalizedPath
-    ? `http://localhost:8080/${normalizedPath}`
-    : defaultUser
+  const profileUrl = assetUrl(normalizedPath, defaultUser)
 
   return (
     <div className="row justify-content-center">

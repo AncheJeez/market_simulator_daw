@@ -10,13 +10,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js'
-import {
-  getAlphaVantageEnabled,
-  getAlphaVantageKey,
-  getDailyQuota,
-  getQuotaRemaining,
-  decrementQuota,
-} from '../utils/settings'
+import { apiUrl } from '../utils/api'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
 
@@ -42,29 +36,22 @@ type DataRow = {
 type SeriesRow = {
   symbol: string
   name: string
-  points: { date: string; close: number }[]
+  points: MarketPoint[]
   cached?: boolean
   fetchedAt?: string | null
 }
 
-type ScenarioKey = 'normal' | 'bull' | 'bear' | 'crash2008' | 'covid2020' | 'sideways' | 'volatile'
+type MarketPoint = {
+  date: string
+  open: number
+  high: number
+  low: number
+  close: number
+  volume: number
+}
 
 const COLORS = ['#0d6efd', '#198754', '#dc3545', '#6f42c1', '#fd7e14', '#20c997', '#0dcaf0', '#6c757d']
 const HISTORY_OPTIONS = [10, 30, 60, 90]
-const MAX_SAMPLE_DAYS = 90
-const SCENARIOS: { key: ScenarioKey; label: string }[] = [
-  { key: 'normal', label: 'Normal market' },
-  { key: 'bull', label: 'Bull run' },
-  { key: 'bear', label: 'Bear market' },
-  { key: 'crash2008', label: '2008 crash' },
-  { key: 'covid2020', label: '2020 COVID shock' },
-  { key: 'sideways', label: 'Sideways' },
-  { key: 'volatile', label: 'High volatility' },
-]
-
-function randomBetween(min: number, max: number) {
-  return Math.random() * (max - min) + min
-}
 
 function formatPrice(value: number) {
   return value.toFixed(2)
@@ -74,81 +61,19 @@ function formatVolume(value: number) {
   return Math.round(value).toLocaleString('en-US')
 }
 
-function getRecentDates(count: number) {
-  const dates: string[] = []
-  const current = new Date()
-  for (let i = 0; i < count; i += 1) {
-    const d = new Date(current)
-    d.setDate(current.getDate() - i)
-    dates.push(d.toISOString().slice(0, 10))
-  }
-  return dates.reverse()
-}
-
-function applyScenarioStep(current: number, index: number, total: number, scenario: ScenarioKey) {
-  const progress = index / Math.max(total - 1, 1)
-
-  switch (scenario) {
-    case 'bull':
-      return current + randomBetween(0.2, 1.5)
-    case 'bear':
-      return current - randomBetween(0.2, 1.2)
-    case 'sideways':
-      return current + randomBetween(-0.6, 0.6)
-    case 'volatile':
-      return current + randomBetween(-3.5, 3.5)
-    case 'crash2008': {
-      if (progress < 0.35) {
-        return current + randomBetween(0.1, 1.0)
-      }
-      if (progress < 0.6) {
-        return current - randomBetween(2.5, 6.5)
-      }
-      return current + randomBetween(0.2, 1.8)
-    }
-    case 'covid2020': {
-      if (progress < 0.25) {
-        return current + randomBetween(0.1, 0.9)
-      }
-      if (progress < 0.45) {
-        return current - randomBetween(3.0, 7.0)
-      }
-      return current + randomBetween(0.5, 2.5)
-    }
-    case 'normal':
-    default:
-      return current + randomBetween(-1.2, 1.2)
-  }
-}
-
-function createScenarioSeries(item: SymbolItem, days: number, scenario: ScenarioKey): SeriesRow {
-  const base = randomBetween(50, 500)
-  let current = base
-  const dates = getRecentDates(days)
-  const points = dates.map((date, index) => {
-    current = applyScenarioStep(current, index, dates.length, scenario)
-    return { date, close: Number(formatPrice(Math.max(current, 1))) }
-  })
-  return { symbol: item.ticker, name: item.name, points }
-}
-
 function createDataRowsFromSeries(rows: SeriesRow[]): DataRow[] {
-  return rows.map((row) => {
+  return rows.filter((row) => row.points.length > 0).map((row) => {
     const latest = row.points[row.points.length - 1]
-    const open = latest.close + randomBetween(-2, 2)
-    const high = Math.max(open, latest.close) + randomBetween(0.5, 4)
-    const low = Math.min(open, latest.close) - randomBetween(0.5, 4)
-    const volume = randomBetween(500000, 12000000)
 
     return {
       symbol: row.symbol,
       name: row.name,
       latestDate: latest.date,
-      open: formatPrice(open),
-      high: formatPrice(high),
-      low: formatPrice(low),
+      open: formatPrice(latest.open),
+      high: formatPrice(latest.high),
+      low: formatPrice(latest.low),
       close: formatPrice(latest.close),
-      volume: formatVolume(volume),
+      volume: formatVolume(latest.volume),
       cached: row.cached,
       fetchedAt: row.fetchedAt,
     }
@@ -163,20 +88,11 @@ function Simulations() {
   const [data, setData] = useState<DataRow[]>([])
   const [series, setSeries] = useState<SeriesRow[]>([])
   const [historyDays, setHistoryDays] = useState(30)
-  const [sampleScenario, setSampleScenario] = useState<ScenarioKey>('normal')
-  const [quotaRemaining, setQuotaRemaining] = useState(getQuotaRemaining())
-
-  const apiKey = getAlphaVantageKey()
-  const apiEnabled = getAlphaVantageEnabled()
-
-  useEffect(() => {
-    setQuotaRemaining(getQuotaRemaining())
-  }, [apiEnabled])
 
   useEffect(() => {
     const loadSymbols = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/symbols', {
+        const response = await fetch(apiUrl('/api/symbols'), {
           credentials: 'include',
         })
         if (!response.ok) {
@@ -204,36 +120,22 @@ function Simulations() {
     [symbols, selected],
   )
 
-  const loadSampleData = () => {
-    const mockSeries = selectedSymbols.map((item) =>
-      createScenarioSeries(item, MAX_SAMPLE_DAYS, sampleScenario),
-    )
-    setSeries(mockSeries)
-    setData(createDataRowsFromSeries(mockSeries))
-  }
-
   const loadLiveData = async () => {
     setError('')
     setLoading(true)
     setData([])
     setSeries([])
 
-    if (!apiKey) {
-      setError('AlphaVantage API key is missing. Add it in Settings.')
-      setLoading(false)
-      return
-    }
-
     try {
       const symbolsParam = selectedSymbols.map((item) => item.ticker).join(',')
       const response = await fetch(
-        `http://localhost:8080/api/market-data?symbols=${encodeURIComponent(
+        apiUrl(`/api/market-data?symbols=${encodeURIComponent(
           symbolsParam,
-        )}&days=${historyDays}&apiKey=${encodeURIComponent(apiKey)}`,
+        )}&days=${historyDays}`),
         { credentials: 'include' },
       )
       if (!response.ok) {
-        setError('Failed to load data from server.')
+        setError(`Failed to load data from server. Status: ${response.status}.`)
         return
       }
       const payload: Array<{
@@ -241,7 +143,7 @@ function Simulations() {
         name: string
         cached: boolean
         fetchedAt: string | null
-        points: { date: string; open: number; high: number; low: number; close: number; volume: number }[]
+        points: MarketPoint[]
       }> = await response.json()
 
       const mappedSeries: SeriesRow[] = payload.map((item) => ({
@@ -249,17 +151,24 @@ function Simulations() {
         name: item.name,
         cached: item.cached,
         fetchedAt: item.fetchedAt,
-        points: item.points.map((p) => ({ date: p.date, close: p.close })),
+        points: item.points,
       }))
+      const rowsWithData = mappedSeries.filter((item) => item.points.length > 0)
 
-      const refetchedCount = payload.filter((item) => !item.cached).length
-      if (refetchedCount > 0) {
-        const remaining = decrementQuota(refetchedCount)
-        setQuotaRemaining(remaining)
+      if (!rowsWithData.length) {
+        setError('Yahoo Finance returned no price history for the selected symbols.')
+        return
       }
 
-      setSeries(mappedSeries)
-      setData(createDataRowsFromSeries(mappedSeries))
+      const missingSymbols = mappedSeries
+        .filter((item) => item.points.length === 0)
+        .map((item) => item.symbol)
+      if (missingSymbols.length) {
+        setError(`No Yahoo Finance data returned for: ${missingSymbols.join(', ')}.`)
+      }
+
+      setSeries(rowsWithData)
+      setData(createDataRowsFromSeries(rowsWithData))
     } catch (err) {
       setError('Failed to fetch data.')
     } finally {
@@ -272,11 +181,6 @@ function Simulations() {
 
     if (!selected.length) {
       setError('Select at least one symbol.')
-      return
-    }
-
-    if (!apiEnabled) {
-      loadSampleData()
       return
     }
 
@@ -297,13 +201,14 @@ function Simulations() {
     if (!slicedSeries.length || !slicedSeries[0].points.length) {
       return null
     }
-    const labels = slicedSeries[0].points.map((point) => point.date)
+    const labels = Array.from(new Set(slicedSeries.flatMap((row) => row.points.map((point) => point.date)))).sort()
     const datasets = slicedSeries.map((row, index) => ({
       label: row.symbol,
-      data: row.points.map((point) => point.close),
+      data: labels.map((label) => row.points.find((point) => point.date === label)?.close ?? null),
       borderColor: COLORS[index % COLORS.length],
       backgroundColor: COLORS[index % COLORS.length],
       tension: 0.3,
+      spanGaps: true,
     }))
 
     return { labels, datasets }
@@ -321,16 +226,8 @@ function Simulations() {
             <h1 className="h3 mb-3">Simulations</h1>
             <div className="d-flex flex-wrap gap-2 mb-3">
               <span className="badge bg-secondary">
-                API: {apiEnabled ? 'Enabled' : 'Disabled'}
+                Source: Yahoo Finance
               </span>
-              <span className="badge bg-light text-dark">
-                API Key: {apiKey ? 'Set' : 'Not set'}
-              </span>
-              {apiEnabled && (
-                <span className="badge bg-warning text-dark">
-                  Remaining daily fetches: {quotaRemaining} / {getDailyQuota()}
-                </span>
-              )}
             </div>
 
             <div className="row g-4">
@@ -359,28 +256,9 @@ function Simulations() {
                   <div className="d-flex align-items-center justify-content-between mb-3">
                     <h2 className="h6 mb-0">Data</h2>
                     <button className="btn btn-primary" type="button" onClick={loadData} disabled={loading}>
-                      {loading ? 'Loading...' : apiEnabled ? 'Fetch Live Data' : 'Load Sample Data'}
+                      {loading ? 'Loading...' : 'Fetch Yahoo Data'}
                     </button>
                   </div>
-                  {!apiEnabled && (
-                    <div className="mb-3">
-                      <label className="form-label">Sample data scenario</label>
-                      <select
-                        className="form-select"
-                        value={sampleScenario}
-                        onChange={(event) => setSampleScenario(event.target.value as ScenarioKey)}
-                      >
-                        {SCENARIOS.map((scenario) => (
-                          <option key={scenario.key} value={scenario.key}>
-                            {scenario.label}
-                          </option>
-                        ))}
-                      </select>
-                      <div className="text-muted small mt-2">
-                        Changing scenario only affects the next sample load.
-                      </div>
-                    </div>
-                  )}
                   {error && <div className="alert alert-danger">{error}</div>}
                   {!error && !data.length && (
                     <div className="text-muted">Select symbols and load data.</div>

@@ -25,8 +25,7 @@ public class MarketDataController {
 	@GetMapping
 	public ResponseEntity<List<MarketSymbolResponse>> getData(
 		@RequestParam("symbols") String symbols,
-		@RequestParam("days") int days,
-		@RequestParam("apiKey") String apiKey) {
+		@RequestParam("days") int days) {
 		if (days <= 0) {
 			return ResponseEntity.badRequest().build();
 		}
@@ -37,6 +36,6 @@ public class MarketDataController {
 		if (symbolList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		}
-		return ResponseEntity.ok(service.getMarketData(symbolList, days, apiKey));
+		return ResponseEntity.ok(service.getMarketData(symbolList, days));
 	}
 }

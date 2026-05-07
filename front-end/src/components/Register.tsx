@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import { apiUrl } from '../utils/api'
 
 function Register() {
   const navigate = useNavigate()
@@ -40,7 +41,7 @@ function Register() {
 
     setLoading(true)
     try {
-      const response = await fetch('http://localhost:8080/api/auth/register', {
+      const response = await fetch(apiUrl('/api/auth/register'), {
         method: 'POST',
         credentials: 'include',
         body: formData,

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import ReagraphDashboard from './ReagraphDashboard'
+import { apiUrl } from '../utils/api'
 
 type OverviewRow = {
   symbol: string
@@ -16,7 +17,7 @@ function DatabaseDashboard() {
   useEffect(() => {
     const load = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/market/overview', {
+        const response = await fetch(apiUrl('/api/market/overview'), {
           credentials: 'include',
         })
         if (response.ok) {

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { apiUrl } from './api'
 
 export type User = {
   id: number
@@ -16,7 +17,7 @@ export function useAuth() {
   useEffect(() => {
     const load = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/auth/me', {
+        const response = await fetch(apiUrl('/api/auth/me'), {
           credentials: 'include',
         })
         if (response.ok) {
@@ -41,7 +42,7 @@ export function useAuth() {
 
   const logout = async () => {
     try {
-      await fetch('http://localhost:8080/api/auth/logout', {
+      await fetch(apiUrl('/api/auth/logout'), {
         method: 'POST',
         credentials: 'include',
       })

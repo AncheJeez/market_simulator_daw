@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import type { User } from '../utils/auth'
+import { apiUrl } from '../utils/api'
 
 type LoginProps = {
   onLogin: (user: User) => void
@@ -20,7 +21,7 @@ function Login({ onLogin }: LoginProps) {
     setMessage('')
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/login', {
+      const response = await fetch(apiUrl('/api/auth/login'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

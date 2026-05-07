@@ -23,7 +23,7 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={isLoggedIn ? <AuthWelcome user={currentUser} /> : <Navigate to="/login" replace />}
+          element={currentUser ? <AuthWelcome user={currentUser} /> : <Navigate to="/login" replace />}
         />
         <Route
           path="/market/simulations"
@@ -47,7 +47,7 @@ function App() {
         />
         <Route
           path="/profile"
-          element={isLoggedIn ? <Profile user={currentUser} onUpdate={updateUser} /> : <Navigate to="/login" replace />}
+          element={currentUser ? <Profile user={currentUser} onUpdate={updateUser} /> : <Navigate to="/login" replace />}
         />
         <Route
           path="/settings"

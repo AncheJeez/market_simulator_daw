@@ -3,6 +3,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import type { User } from '../utils/auth'
 import defaultUser from '../assets/default-user.jpg'
+import { apiUrl, assetUrl } from '../utils/api'
 
 type ProfileProps = {
   user: User
@@ -18,9 +19,7 @@ function Profile({ user, onUpdate }: ProfileProps) {
   const [loading, setLoading] = useState(false)
   const rawPath = user?.profilePicturePath || ''
   const normalizedPath = rawPath.replace(/^\/+/, '')
-  const profileUrl = normalizedPath
-    ? `http://localhost:8080/${normalizedPath}`
-    : defaultUser
+  const profileUrl = assetUrl(normalizedPath, defaultUser)
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -40,7 +39,7 @@ function Profile({ user, onUpdate }: ProfileProps) {
 
     setLoading(true)
     try {
-      const response = await fetch(`http://localhost:8080/api/users/${user.id}`, {
+      const response = await fetch(apiUrl(`/api/users/${user.id}`), {
         method: 'PUT',
         credentials: 'include',
         body: formData,

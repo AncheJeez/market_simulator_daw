@@ -5,6 +5,7 @@ import Sidebar from './Sidebar'
 import Footer from './Footer'
 import type { User } from '../utils/auth'
 import defaultUser from '../assets/default-user.jpg'
+import { assetUrl } from '../utils/api'
 
 type LayoutProps = {
   children: ReactNode
@@ -28,7 +29,7 @@ function Layout({ children, showSidebar, onLogout, currentUser }: LayoutProps) {
       return defaultUser
     }
     const normalized = currentUser.profilePicturePath.replace(/^\/+/, '')
-    return `http://localhost:8080/${normalized}`
+    return assetUrl(normalized, defaultUser)
   }, [currentUser])
 
   return (

@@ -1,20 +1,16 @@
 import { useEffect, useState } from 'react'
-import { getAlphaVantageEnabled, getAlphaVantageKey, setAlphaVantageEnabled, setAlphaVantageKey } from '../utils/settings'
+import { getYahooFinanceEnabled, setYahooFinanceEnabled } from '../utils/settings'
 
 function Settings() {
-  const [showKey, setShowKey] = useState(false)
-  const [apiKey, setApiKey] = useState(getAlphaVantageKey())
-  const [enabled, setEnabled] = useState(getAlphaVantageEnabled())
+  const [enabled, setEnabled] = useState(getYahooFinanceEnabled())
   const [message, setMessage] = useState('')
 
   useEffect(() => {
-    setApiKey(getAlphaVantageKey())
-    setEnabled(getAlphaVantageEnabled())
+    setEnabled(getYahooFinanceEnabled())
   }, [])
 
   const handleSave = () => {
-    setAlphaVantageKey(apiKey.trim())
-    setAlphaVantageEnabled(enabled)
+    setYahooFinanceEnabled(enabled)
     setMessage('Settings saved.')
   }
 
@@ -61,28 +57,8 @@ function Settings() {
                   onChange={(event) => setEnabled(event.target.checked)}
                 />
                 <label className="form-check-label" htmlFor="alphaToggle">
-                  Enable AlphaVantage API calls
+                  Enable Yahoo Finance API calls
                 </label>
-              </div>
-
-              <div>
-                <label className="form-label fw-semibold">AlphaVantage API Key</label>
-                <div className="input-group">
-                  <input
-                    className="form-control"
-                    type={showKey ? 'text' : 'password'}
-                    placeholder="Enter AlphaVantage API key"
-                    value={apiKey}
-                    onChange={(event) => setApiKey(event.target.value)}
-                  />
-                  <button
-                    className="btn btn-outline-secondary"
-                    type="button"
-                    onClick={() => setShowKey((prev) => !prev)}
-                  >
-                    {showKey ? 'Hide' : 'Show'}
-                  </button>
-                </div>
               </div>
 
               <button className="btn btn-primary" type="button" onClick={handleSave}>
