@@ -284,19 +284,37 @@ function Simulations() {
                 </div>
               </div>
 
+              <div className="d-flex align-items-center justify-content-between mb-3">
+                <div className="mt-3">
+                  <label className="form-label">History length</label>
+                  <select
+                    className="form-select"
+                    value={historyDays}
+                    onChange={(event) => handleHistoryChange(Number(event.target.value))}
+                  >
+                    {HISTORY_OPTIONS.map((value) => (
+                      <option key={value} value={value}>
+                        {value} days
+                      </option>
+                    ))}
+                  </select>
+                  <div className="text-muted small mt-2">
+                    Changing length only slices existing data. Press load to refresh data.
+                  </div>
+                </div>
+                <button className="btn btn-primary" type="button" onClick={loadData} disabled={loading}>
+                  {loading ? 'Loading...' : 'Fetch Yahoo Data'}
+                </button>
+              </div>
 
               <div className="col-lg-12">
                 <div className="border rounded p-3">
-                  <div className="d-flex align-items-center justify-content-between mb-3">
-                    <h2 className="h6 mb-0">Data</h2>
-                    <button className="btn btn-primary" type="button" onClick={loadData} disabled={loading}>
-                      {loading ? 'Loading...' : 'Fetch Yahoo Data'}
-                    </button>
-                  </div>
+
                   {error && <div className="alert alert-danger">{error}</div>}
                   {!error && !data.length && (
                     <div className="text-muted">Select symbols and load data.</div>
                   )}
+
                   {data.length > 0 && (
                     <div className="table-responsive mb-4">
                       <table className="table table-sm align-middle">
@@ -362,23 +380,6 @@ function Simulations() {
                             },
                           }}
                         />
-                      </div>
-                      <div className="mt-3">
-                        <label className="form-label">History length</label>
-                        <select
-                          className="form-select"
-                          value={historyDays}
-                          onChange={(event) => handleHistoryChange(Number(event.target.value))}
-                        >
-                          {HISTORY_OPTIONS.map((value) => (
-                            <option key={value} value={value}>
-                              {value} days
-                            </option>
-                          ))}
-                        </select>
-                        <div className="text-muted small mt-2">
-                          Changing length only slices existing data. Press load to refresh data.
-                        </div>
                       </div>
                     </div>
                   )}
