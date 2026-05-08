@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Line } from 'react-chartjs-2'
+import Select, { MultiValue } from 'react-select'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -13,6 +14,23 @@ import {
 import { apiUrl } from '../utils/api'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
+
+const backgroundBorderInputsSelect = {
+  control: (base: any) => ({
+    ...base,
+    backgroundColor: '#fff',
+    borderColor: '#dee2e6',
+    borderRadius: '0.375rem',
+    '&:hover': {
+      borderColor: '#86b7fe'
+    }
+  })
+}
+
+interface Option {
+  value: string;
+  label: string;
+}
 
 type SymbolItem = {
   id: number
@@ -218,40 +236,56 @@ function Simulations() {
     setHistoryDays(value)
   }
 
+  const symbolOptions: Option[] = useMemo(() => 
+    symbols.map(item => ({
+      value: item.ticker,
+      label: `${item.ticker} - ${item.name}`
+    })), [symbols]
+  );
+
+  const selectedValue = symbolOptions.filter(opt => selected.includes(opt.value));
+
   return (
     <div className="row justify-content-center">
       <div className="col-lg-11">
         <div className="card shadow-sm">
           <div className="card-body p-4">
             <h1 className="h3 mb-3">Simulations</h1>
+
+
             <div className="d-flex flex-wrap gap-2 mb-3">
               <span className="badge bg-secondary">
                 Source: Yahoo Finance
               </span>
             </div>
 
-            <div className="row g-4">
-              <div className="col-lg-4">
-                <div className="border rounded p-3 h-100">
-                  <h2 className="h6 mb-3">Symbols</h2>
-                  <div className="d-grid gap-2">
-                    {symbols.map((item) => (
-                      <label key={item.ticker} className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          checked={selected.includes(item.ticker)}
-                          onChange={() => toggleSymbol(item.ticker)}
-                        />
-                        <span className="ms-2">
-                          {item.ticker} - {item.name}
-                        </span>
-                      </label>
-                    ))}
+            <div className="row g-8">
+              <div className="col-lg-12">
+                <div className="mb-3">
+                  <label className="form-label small fw-bold text-muted text-uppercase">
+                    Seleccionar Símbolos
+                  </label>
+                  <Select
+                    isMulti
+                    options={symbolOptions}
+                    value={selectedValue}
+                    styles={backgroundBorderInputsSelect}
+                    placeholder="Buscar ticker o nombre..."
+                    noOptionsMessage={() => "No se encontraron resultados"}
+                    onChange={(newValue: MultiValue<Option>) => {
+                      setSelected(newValue ? newValue.map(opt => opt.value) : []);
+                    }}
+                    classNamePrefix="select"
+                  />
+                  
+                  <div className="form-text small mt-2">
+                    Puedes seleccionar múltiples activos para comparar en la gráfica.
                   </div>
                 </div>
               </div>
-              <div className="col-lg-8">
+
+
+              <div className="col-lg-12">
                 <div className="border rounded p-3">
                   <div className="d-flex align-items-center justify-content-between mb-3">
                     <h2 className="h6 mb-0">Data</h2>
@@ -351,6 +385,7 @@ function Simulations() {
                 </div>
               </div>
             </div>
+            
           </div>
         </div>
       </div>

@@ -101,3 +101,5 @@ Backend: Spring Boot.
 Database: PostgreSQL.
 
 ![Entity relationship diagram](https://github.com/AncheJeez/ProyectoIntegrado/blob/main/mock-up/DiagramaEntidadRelacionMermaid.png)
+
+npm i react-select
