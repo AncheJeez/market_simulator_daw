@@ -1,4 +1,5 @@
 INSERT INTO "symbol" (ticker, name) VALUES
+-- TECNOLOGÍA Y SEMICONDUCTORES
 ('AAPL','Apple Inc.'),
 ('MSFT','Microsoft Corporation'),
 ('GOOGL','Alphabet Inc.'),
@@ -17,6 +18,99 @@ INSERT INTO "symbol" (ticker, name) VALUES
 ('AVGO','Broadcom Inc.'),
 ('TXN','Texas Instruments Incorporated'),
 ('IBM','International Business Machines'),
+('ASML','ASML Holding N.V.'),
+('MU','Micron Technology, Inc.'),
+('AMAT','Applied Materials, Inc.'),
+('LRCX','Lam Research Corporation'),
+('PANW','Palo Alto Networks, Inc.'),
+('SNPS','Synopsys, Inc.'),
+('CDNS','Cadence Design Systems, Inc.'),
+
+-- FINANZAS Y BANCA
 ('JPM','JPMorgan Chase & Co.'),
-('BAC','Bank of America Corporation')
+('BAC','Bank of America Corporation'),
+('WFC','Wells Fargo & Company'),
+('C','Citigroup Inc.'),
+('MS','Morgan Stanley'),
+('GS','The Goldman Sachs Group, Inc.'),
+('V','Visa Inc.'),
+('MA','Mastercard Incorporated'),
+('PYPL','PayPal Holdings, Inc.'),
+('AXP','American Express Company'),
+('BLK','BlackRock, Inc.'),
+('HSBC','HSBC Holdings plc'),
+('RY','Royal Bank of Canada'),
+('BRK-B','Berkshire Hathaway Inc.'),
+
+-- CONSUMO Y RETAIL
+('WMT','Walmart Inc.'),
+('HD','The Home Depot, Inc.'),
+('COST','Costco Wholesale Corporation'),
+('TGT','Target Corporation'),
+('LOW','Lowe''s Companies, Inc.'),
+('NKE','NIKE, Inc.'),
+('SBUX','Starbucks Corporation'),
+('MCD','McDonald''s Corporation'),
+('KO','The Coca-Cola Company'),
+('PEP','PepsiCo, Inc.'),
+('PG','Procter & Gamble Company'),
+('EL','The Estée Lauder Companies Inc.'),
+('UL','Unilever PLC'),
+('OR.PA','L''Oréal S.A.'),
+('NSRGY','Nestlé S.A.'),
+
+-- SALUD Y FARMACÉUTICAS
+('JNJ','Johnson & Johnson'),
+('PFE','Pfizer Inc.'),
+('MRK','Merck & Co., Inc.'),
+('ABBV','AbbVie Inc.'),
+('LLY','Eli Lilly and Company'),
+('UNH','UnitedHealth Group Incorporated'),
+('CVS','CVS Health Corporation'),
+('TMO','Thermo Fisher Scientific Inc.'),
+('ABT','Abbott Laboratories'),
+('DHR','Danaher Corporation'),
+('BMY','Bristol-Myers Squibb Company'),
+('AMGN','Amgen Inc.'),
+('GILD','Gilead Sciences, Inc.'),
+
+-- ENERGÍA E INDUSTRIA
+('XOM','Exxon Mobil Corporation'),
+('CVX','Chevron Corporation'),
+('SHEL','Shell plc'),
+('TTE','TotalEnergies SE'),
+('BP','BP p.l.c.'),
+('CAT','Caterpillar Inc.'),
+('GE','General Electric Company'),
+('BA','The Boeing Company'),
+('HON','Honeywell International Inc.'),
+('LMT','Lockheed Martin Corporation'),
+('UPS','United Parcel Service, Inc.'),
+('FDX','FedEx Corporation'),
+('DE','Deere & Company'),
+('MMM','3M Company'),
+
+-- COMUNICACIONES Y ENTRETENIMIENTO
+('DIS','The Walt Disney Company'),
+('VZ','Verizon Communications Inc.'),
+('T','AT&T Inc.'),
+('CMCSA','Comcast Corporation'),
+('TMUS','T-Mobile US, Inc.'),
+('SONY','Sony Group Corporation'),
+('SPOT','Spotify Technology S.A.'),
+
+-- AUTOMOTRIZ Y OTROS
+('TM','Toyota Motor Corporation'),
+('F','Ford Motor Company'),
+('GM','General Motors Company'),
+('HMC','Honda Motor Co., Ltd.'),
+('RACE','Ferrari N.V.'),
+('AIR.PA','Airbus SE'),
+
+-- ÍNDICES Y ETFS (Muy útiles para comparar)
+('SPY','SPDR S&P 500 ETF Trust'),
+('QQQ','Invesco QQQ Trust'),
+('DIA','SPDR Dow Jones Industrial Average ETF'),
+('IWM','iShares Russell 2000 ETF'),
+('BTC-USD','Bitcoin USD')
 ON CONFLICT (ticker) DO NOTHING;

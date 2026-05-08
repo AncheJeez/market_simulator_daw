@@ -103,3 +103,20 @@ Database: PostgreSQL.
 ![Entity relationship diagram](https://github.com/AncheJeez/ProyectoIntegrado/blob/main/mock-up/DiagramaEntidadRelacionMermaid.png)
 
 npm i react-select
+
+TODO:
+-Hacer interfaz administrador, lista usuarios y modificaciones.
+-Vista de envio de correos y notificaciones
+-Programar fetchs diarios
+
+-Integrar vista con subreddits de financias y post de twitter con #
+-Mejorar dashboard y que sea mostrado independientemente de que el usuario esté logeado, igual que con las noticias.
+-Apartados de noticias relacionadas con enconomia
+-Seleccionar topics (TECNOLOGÍA Y SEMICONDUCTORES, FINANZAS Y BANCA, CONSUMO Y RETAIL, SALUD Y FARMACÉUTICAS, ENERGÍA E INDUSTRIA,COMUNICACIONES Y ENTRETENIMIENTO, AUTOMOTRIZ Y OTROS, ÍNDICES Y ETFS).
+-Cada topic tiene un chat global para los usuarios, donde se guardan los comentarios.
+-Cada usuario tiene 10k de saldo
+-Vista ladder
+-Vista portfolio (current gains and investments), otros usuarios pueden verte esta vista.
+-Vista de trading
+-Al seleccionar una empresa mostrar datos específicos.
+-Pestaña de opciones (idioma, modo claro/oscuro)
