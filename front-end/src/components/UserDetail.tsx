@@ -172,15 +172,15 @@ function UserDetail() {
             <h5>Change Password</h5>
             <div className="mb-3">
               <label className="form-label">Current Password</label>
-              <input type="password" class="form-control" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} />
+              <input type="password" className="form-control" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} />
             </div>
             <div className="mb-3">
               <label className="form-label">New Password</label>
-              <input type="password" class="form-control" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
+              <input type="password" className="form-control" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
             </div>
             <div className="mb-3">
               <label className="form-label">Confirm New Password</label>
-              <input type="password" class="form-control" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
+              <input type="password" className="form-control" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
             </div>
             <button type="submit" className="btn btn-primary">Save Changes</button>
           </form>

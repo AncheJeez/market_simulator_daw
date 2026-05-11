@@ -2,12 +2,17 @@ import { useEffect, useState } from "react";
 import { apiUrl } from "../utils/api";
 import { User } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
+import Pagination from "../components/reusables/Pagination";
 
 function AdminDashboard() {
   const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; 
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -19,7 +24,7 @@ function AdminDashboard() {
           const data = await response.json();
           setUsers(data);
         } else {
-          setError("Failed to fetch users. You might not have permission.");
+          setError("Failed to fetch users.");
         }
       } catch (err) {
         setError("An error occurred while fetching users.");
@@ -27,9 +32,14 @@ function AdminDashboard() {
         setLoading(false);
       }
     };
-
     fetchUsers();
   }, []);
+
+  // Calculate Logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentUsers = users.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(users.length / itemsPerPage);
 
   if (loading) return <div className="p-4">Loading users...</div>;
   if (error) return <div className="p-4 text-danger">{error}</div>;
@@ -45,41 +55,37 @@ function AdminDashboard() {
                 <tr>
                   <th>ID</th>
                   <th>Username</th>
-                  <th>First Name</th>
-                  <th>Second Name</th>
                   <th>Role</th>
                   <th>Profile Picture</th>
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
+                {currentUsers.map((user) => (
                   <tr key={user.id} onClick={() => navigate("/admin/user/" + user.id)} style={{ cursor: "pointer" }}>
                     <td>{user.id}</td>
                     <td>{user.userName}</td>
-                    <td>{user.firstName}</td>
-                    <td>{user.secondName}</td>
                     <td>
-                      <span className={`badge ${user.userType === "ADMIN" ? "bg-danger" : user.userType === "MANAGER" ? "bg-warning text-dark" : "bg-primary"}`}>
+                      <span className={`badge ${user.userType === "ADMIN" ? "bg-danger" : "bg-primary"}`}>
                         {user.userType}
                       </span>
                     </td>
                     <td>
                       {user.profilePicturePath ? (
-                        <img
-                          src={apiUrl("/" + user.profilePicturePath)}
-                          alt={user.userName}
-                          className="rounded-circle"
-                          style={{ width: "32px", height: "32px", objectFit: "cover" }}
-                        />
-                      ) : (
-                        <span className="text-muted small">No image</span>
-                      )}
+                        <img src={apiUrl("/" + user.profilePicturePath)} alt="" className="rounded-circle" style={{ width: "32px", height: "32px" }} />
+                      ) : "No image"}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+
+          <Pagination 
+            currentPage={currentPage} 
+            totalPages={totalPages} 
+            onPageChange={(page: any) => setCurrentPage(page)} 
+          />
+          
         </div>
       </div>
     </div>
