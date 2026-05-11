@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Line } from 'react-chartjs-2'
-import Select, { MultiValue } from 'react-select'
+import { useEffect, useMemo, useState } from 'react';
+import { Line } from 'react-chartjs-2';
+import Select, { MultiValue, StylesConfig } from 'react-select';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,79 +10,120 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js'
-import { apiUrl } from '../utils/api'
+  Filler,
+  ChartOptions,
+  ChartData
+} from 'chart.js';
+import { apiUrl } from '../utils/api';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
-const backgroundBorderInputsSelect = {
-  control: (base: any) => ({
-    ...base,
-    backgroundColor: '#fff',
-    borderColor: '#dee2e6',
-    borderRadius: '0.375rem',
-    '&:hover': {
-      borderColor: '#86b7fe'
-    }
-  })
-}
+const THEME = {
+  bg: '#0f172a',
+  card: '#1a2949',
+  border: '#2b3139',
+  text: '#eaecef',
+  muted: '#848e9c',
+  primary: '#f0b90b',
+  success: '#0ecb81',
+  danger: '#f6465d',
+};
+
+const CHART_COLORS = ['#f0b90b', '#0ecb81', '#4788ff', '#9c52fd', '#ff6611'];
+const HISTORY_OPTIONS = [10, 30, 60, 90];
 
 interface Option {
   value: string;
   label: string;
 }
 
-type SymbolItem = {
-  id: number
-  ticker: string
-  name: string
+interface SymbolItem {
+  id: number;
+  ticker: string;
+  name: string;
 }
 
-type DataRow = {
-  symbol: string
-  name: string
-  latestDate: string
-  open: string
-  high: string
-  low: string
-  close: string
-  volume: string
-  cached?: boolean
-  fetchedAt?: string | null
+interface MarketPoint {
+  date: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
 }
 
-type SeriesRow = {
-  symbol: string
-  name: string
-  points: MarketPoint[]
-  cached?: boolean
-  fetchedAt?: string | null
+interface SeriesRow {
+  symbol: string;
+  name: string;
+  points: MarketPoint[];
+  cached?: boolean;
+  fetchedAt?: string | null;
 }
 
-type MarketPoint = {
-  date: string
-  open: number
-  high: number
-  low: number
-  close: number
-  volume: number
+interface DataRow {
+  symbol: string;
+  name: string;
+  latestDate: string;
+  open: string;
+  high: string;
+  low: string;
+  close: string;
+  volume: string;
+  cached?: boolean;
+  fetchedAt?: string | null;
 }
 
-const COLORS = ['#0d6efd', '#198754', '#dc3545', '#6f42c1', '#fd7e14', '#20c997', '#0dcaf0', '#6c757d']
-const HISTORY_OPTIONS = [10, 30, 60, 90]
+const customSelectStyles: StylesConfig<Option, true> = {
+  control: (base) => ({
+    ...base,
+    backgroundColor: THEME.card,
+    borderColor: THEME.border,
+    color: THEME.text,
+    minHeight: '38px',
+    '&:hover': { borderColor: THEME.primary }
+  }),
+  menu: (base) => ({ 
+    ...base, 
+    backgroundColor: THEME.card, 
+    border: `1px solid ${THEME.border}`,
+    zIndex: 9999 
+  }),
+  option: (base, state) => ({
+    ...base,
+    backgroundColor: state.isFocused ? THEME.border : 'transparent',
+    color: THEME.text,
+    '&:active': { backgroundColor: THEME.primary }
+  }),
+  multiValue: (base) => ({ 
+    ...base, 
+    backgroundColor: THEME.border,
+    borderRadius: '4px' 
+  }),
+  multiValueLabel: (base) => ({ ...base, color: THEME.text }),
+  multiValueRemove: (base) => ({
+    ...base,
+    color: THEME.muted,
+    '&:hover': { backgroundColor: THEME.danger, color: 'white' }
+  }),
+  input: (base) => ({ ...base, color: THEME.text }),
+  placeholder: (base) => ({ ...base, color: THEME.muted }),
+  singleValue: (base) => ({ ...base, color: THEME.text }),
+};
 
-function formatPrice(value: number) {
-  return value.toFixed(2)
+/**
+ * HELPERS
+ */
+function formatPrice(value: number): string {
+  return value.toFixed(2);
 }
 
-function formatVolume(value: number) {
-  return Math.round(value).toLocaleString('en-US')
+function formatVolume(value: number): string {
+  return Math.round(value).toLocaleString('en-US');
 }
 
 function createDataRowsFromSeries(rows: SeriesRow[]): DataRow[] {
   return rows.filter((row) => row.points.length > 0).map((row) => {
-    const latest = row.points[row.points.length - 1]
-
+    const latest = row.points[row.points.length - 1];
     return {
       symbol: row.symbol,
       name: row.name,
@@ -94,147 +135,77 @@ function createDataRowsFromSeries(rows: SeriesRow[]): DataRow[] {
       volume: formatVolume(latest.volume),
       cached: row.cached,
       fetchedAt: row.fetchedAt,
-    }
-  })
+    };
+  });
 }
 
+/**
+ * COMPONENT
+ */
 function Simulations() {
-  const [symbols, setSymbols] = useState<SymbolItem[]>([])
-  const [selected, setSelected] = useState<string[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [data, setData] = useState<DataRow[]>([])
-  const [series, setSeries] = useState<SeriesRow[]>([])
-  const [historyDays, setHistoryDays] = useState(30)
+  const [symbols, setSymbols] = useState<SymbolItem[]>([]);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+  const [data, setData] = useState<DataRow[]>([]);
+  const [series, setSeries] = useState<SeriesRow[]>([]);
+  const [historyDays, setHistoryDays] = useState<number>(30);
 
   useEffect(() => {
     const loadSymbols = async () => {
       try {
         const response = await fetch(apiUrl('/api/symbols'), {
           credentials: 'include',
-        })
+        });
         if (!response.ok) {
-          setError('Failed to load stocks.')
-          return
+          setError('Failed to connect to market symbols.');
+          return;
         }
-        const list: SymbolItem[] = await response.json()
-        setSymbols(list)
+        const list: SymbolItem[] = await response.json();
+        setSymbols(list);
       } catch (err) {
-        setError('Failed to load stocks.')
+        setError('Market symbols unavailable.');
       }
-    }
-
-    loadSymbols()
-  }, [])
-
-  const toggleSymbol = (ticker: string) => {
-    setSelected((prev) =>
-      prev.includes(ticker) ? prev.filter((item) => item !== ticker) : [...prev, ticker]
-    )
-  }
-
-  const selectedSymbols = useMemo(
-    () => symbols.filter((item) => selected.includes(item.ticker)),
-    [symbols, selected],
-  )
-
-  const loadLiveData = async () => {
-    setError('')
-    setLoading(true)
-    setData([])
-    setSeries([])
-
-    try {
-      const symbolsParam = selectedSymbols.map((item) => item.ticker).join(',')
-      const response = await fetch(
-        apiUrl(`/api/market-data?symbols=${encodeURIComponent(
-          symbolsParam,
-        )}&days=${historyDays}`),
-        { credentials: 'include' },
-      )
-      if (!response.ok) {
-        setError(`Failed to load data from server. Status: ${response.status}.`)
-        return
-      }
-      const payload: Array<{
-        symbol: string
-        name: string
-        cached: boolean
-        fetchedAt: string | null
-        points: MarketPoint[]
-      }> = await response.json()
-
-      const mappedSeries: SeriesRow[] = payload.map((item) => ({
-        symbol: item.symbol,
-        name: item.name,
-        cached: item.cached,
-        fetchedAt: item.fetchedAt,
-        points: item.points,
-      }))
-      const rowsWithData = mappedSeries.filter((item) => item.points.length > 0)
-
-      if (!rowsWithData.length) {
-        setError('Yahoo Finance returned no price history for the selected stocks.')
-        return
-      }
-
-      const missingSymbols = mappedSeries
-        .filter((item) => item.points.length === 0)
-        .map((item) => item.symbol)
-      if (missingSymbols.length) {
-        setError(`No Yahoo Finance data returned for these stocks: ${missingSymbols.join(', ')}.`)
-      }
-
-      setSeries(rowsWithData)
-      setData(createDataRowsFromSeries(rowsWithData))
-    } catch (err) {
-      setError('Failed to fetch data.')
-    } finally {
-      setLoading(false)
-    }
-  }
+    };
+    loadSymbols();
+  }, []);
 
   const loadData = async () => {
-    setError('')
-
     if (!selected.length) {
-      setError('Select at least one stock.')
-      return
+      setError('Select at least one ticker to simulate.');
+      return;
     }
+    setError('');
+    setLoading(true);
 
-    await loadLiveData()
-  }
+    try {
+      const symbolsParam = selected.join(',');
+      const response = await fetch(
+        apiUrl(`/api/market-data?symbols=${encodeURIComponent(symbolsParam)}&days=${historyDays}`),
+        { credentials: 'include' }
+      );
+      
+      if (!response.ok) {
+        setError(`Data sync failed. Status: ${response.status}`);
+        return;
+      }
 
-  const slicedSeries = useMemo(() => {
-    if (!series.length) {
-      return []
+      const payload: SeriesRow[] = await response.json();
+      const validRows = payload.filter((item) => item.points.length > 0);
+
+      if (validRows.length === 0) {
+        setError('No historical data found for selection.');
+        return;
+      }
+
+      setSeries(validRows);
+      setData(createDataRowsFromSeries(validRows));
+    } catch (err) {
+      setError('Market data stream interrupted.');
+    } finally {
+      setLoading(false);
     }
-    return series.map((row) => ({
-      ...row,
-      points: row.points.slice(-historyDays),
-    }))
-  }, [series, historyDays])
-
-  const chartData = useMemo(() => {
-    if (!slicedSeries.length || !slicedSeries[0].points.length) {
-      return null
-    }
-    const labels = Array.from(new Set(slicedSeries.flatMap((row) => row.points.map((point) => point.date)))).sort()
-    const datasets = slicedSeries.map((row, index) => ({
-      label: row.symbol,
-      data: labels.map((label) => row.points.find((point) => point.date === label)?.close ?? null),
-      borderColor: COLORS[index % COLORS.length],
-      backgroundColor: COLORS[index % COLORS.length],
-      tension: 0.3,
-      spanGaps: true,
-    }))
-
-    return { labels, datasets }
-  }, [slicedSeries])
-
-  const handleHistoryChange = (value: number) => {
-    setHistoryDays(value)
-  }
+  };
 
   const symbolOptions: Option[] = useMemo(() => 
     symbols.map(item => ({
@@ -243,155 +214,199 @@ function Simulations() {
     })), [symbols]
   );
 
-  const selectedValue = symbolOptions.filter(opt => selected.includes(opt.value));
+  const chartData: ChartData<'line'> | null = useMemo(() => {
+    if (!series.length) return null;
+
+    const allDates = Array.from(
+      new Set(series.flatMap((s) => s.points.map((p) => p.date)))
+    ).sort();
+
+    return {
+      labels: allDates,
+      datasets: series.map((s, i) => ({
+        label: s.symbol,
+        data: allDates.map((d) => s.points.find((p) => p.date === d)?.close ?? null),
+        borderColor: CHART_COLORS[i % CHART_COLORS.length],
+        backgroundColor: (context) => {
+          const chart = context.chart;
+          const { ctx, chartArea } = chart;
+          if (!chartArea) return undefined;
+          const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+          gradient.addColorStop(0, CHART_COLORS[i % CHART_COLORS.length] + '44');
+          gradient.addColorStop(1, 'transparent');
+          return gradient;
+        },
+        fill: true,
+        tension: 0.1,
+        pointRadius: 0,
+        pointHoverRadius: 5,
+        borderWidth: 2,
+      }))
+    };
+  }, [series]);
+
+  const chartOptions: ChartOptions<'line'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: { color: THEME.muted, boxWidth: 10, font: { size: 12, weight: 'bold' } }
+      },
+      tooltip: {
+        backgroundColor: THEME.card,
+        titleColor: THEME.primary,
+        bodyColor: THEME.text,
+        borderColor: THEME.border,
+        borderWidth: 1,
+        padding: 12,
+        boxPadding: 6,
+      }
+    },
+    scales: {
+      y: {
+        grid: { color: THEME.border },
+        ticks: { 
+          color: THEME.muted,
+          callback: (value: string | number) => `$${value}`
+        }
+      },
+      x: {
+        grid: { display: false },
+        ticks: { color: THEME.muted, maxRotation: 0 }
+      }
+    }
+  };
 
   return (
-    <div className="row justify-content-center">
-      <div className="col-lg-11">
-        <div className="card shadow-sm">
-          <div className="card-body p-4">
-            <h1 className="h3 mb-3">Simulations</h1>
-
-
-            <div className="d-flex flex-wrap gap-2 mb-3">
-              <span className="badge bg-secondary">
-                Source: Yahoo Finance
-              </span>
-            </div>
-
-            <div className="row g-8">
-              <div className="col-lg-12">
-                <div className="mb-3">
-                  <label className="form-label small fw-bold text-muted text-uppercase">
-                    Seleccionar Stocks
-                  </label>
-                  <Select
-                    isMulti
-                    options={symbolOptions}
-                    value={selectedValue}
-                    styles={backgroundBorderInputsSelect}
-                    placeholder="Buscar ticker o nombre..."
-                    noOptionsMessage={() => "No se encontraron resultados"}
-                    onChange={(newValue: MultiValue<Option>) => {
-                      setSelected(newValue ? newValue.map(opt => opt.value) : []);
-                    }}
-                    classNamePrefix="select"
-                  />
-                  
-                  <div className="form-text small mt-2">
-                    Puedes seleccionar múltiples stocks para comparar en la gráfica.
-                  </div>
-                </div>
-              </div>
-
-              <div className="d-flex align-items-center justify-content-between mb-3">
-                <div className="mt-3">
-                  <label className="form-label">History length</label>
-                  <select
-                    className="form-select"
-                    value={historyDays}
-                    onChange={(event) => handleHistoryChange(Number(event.target.value))}
-                  >
-                    {HISTORY_OPTIONS.map((value) => (
-                      <option key={value} value={value}>
-                        {value} days
-                      </option>
-                    ))}
-                  </select>
-                  <div className="text-muted small mt-2">
-                    Changing length only slices existing data. Press load to refresh data.
-                  </div>
-                </div>
-                <button className="btn btn-primary" type="button" onClick={loadData} disabled={loading}>
-                  {loading ? 'Loading...' : 'Fetch Yahoo Data'}
-                </button>
-              </div>
-
-              <div className="col-lg-12">
-                <div className="border rounded p-3">
-
-                  {error && <div className="alert alert-danger">{error}</div>}
-                  {!error && !data.length && (
-                    <div className="text-muted">Select stocks and load data.</div>
-                  )}
-
-                  {data.length > 0 && (
-                    <div className="table-responsive mb-4">
-                      <table className="table table-sm align-middle">
-                        <thead>
-                          <tr>
-                            <th>Stock</th>
-                            <th>Name</th>
-                            <th>Date</th>
-                            <th>Open</th>
-                            <th>High</th>
-                            <th>Low</th>
-                            <th>Close</th>
-                            <th>Volume</th>
-                            <th>Status</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {data.map((row) => (
-                            <tr key={row.symbol}>
-                              <td className="fw-semibold">{row.symbol}</td>
-                              <td>{row.name}</td>
-                              <td>{row.latestDate}</td>
-                              <td>{row.open}</td>
-                              <td>{row.high}</td>
-                              <td>{row.low}</td>
-                              <td>{row.close}</td>
-                              <td>{row.volume}</td>
-                              <td>
-                                {row.cached === undefined ? (
-                                  <span className="text-muted">sample</span>
-                                ) : row.cached ? (
-                                  <span className="text-success">cached</span>
-                                ) : (
-                                  <span className="text-warning">refetched</span>
-                                )}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-
-                  {chartData && (
-                    <div>
-                      <div className="border rounded p-3" style={{ height: 360 }}>
-                        <Line
-                          data={chartData}
-                          options={{
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                              legend: { position: 'bottom' },
-                              title: { display: false },
-                            },
-                            scales: {
-                              y: {
-                                title: { display: true, text: 'Price (USD)' },
-                                ticks: {
-                                  callback: (value) => `$${value}`,
-                                },
-                              },
-                            },
-                          }}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-            
+    <div className="container-fluid min-vh-100 py-4" style={{ backgroundColor: THEME.bg, color: THEME.text }}>
+      <div className="row g-4 justify-content-center">
+        {/* TOP BAR / HEADER */}
+        <div className="col-11 d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom pb-3 mb-2" style={{ borderColor: THEME.border }}>
+          <div>
+            <h1 className="h4 fw-bold mb-0 text-uppercase tracking-tight">Terminal <span style={{ color: THEME.primary }}>Simulations</span></h1>
+            <p className="small mb-0" style={{ color: THEME.muted }}>PROPRIETARY TRADING ENGINE v2.6</p>
           </div>
+          <div className="d-flex gap-2 mt-3 mt-md-0">
+            <div className="d-flex align-items-center px-3 rounded border" style={{ borderColor: THEME.border, backgroundColor: THEME.card }}>
+              <span className="small fw-bold me-2" style={{ color: THEME.muted }}>RANGE</span>
+              <select
+                className="form-select form-select-sm border-0 bg-transparent text-white"
+                value={historyDays}
+                onChange={(e) => setHistoryDays(Number(e.target.value))}
+                style={{ width: '100px', boxShadow: 'none' }}
+              >
+                {HISTORY_OPTIONS.map((opt) => (
+                  <option key={opt} value={opt} style={{ backgroundColor: THEME.card }}>{opt} Days</option>
+                ))}
+              </select>
+            </div>
+            <button 
+              className="btn btn-sm fw-bold px-4 shadow-sm" 
+              style={{ backgroundColor: THEME.primary, color: '#000' }}
+              onClick={loadData}
+              disabled={loading}
+            >
+              {loading ? 'SYNCING...' : 'REFRESH ENGINE'}
+            </button>
+          </div>
+        </div>
+
+        {/* SIDEBAR: SELECTION */}
+        <div className="col-11 col-lg-3">
+          <div className="card border-0 shadow-sm" style={{ backgroundColor: THEME.card }}>
+            <div className="card-body p-3">
+              <label className="form-label small fw-bold text-uppercase mb-3" style={{ color: THEME.muted }}>Asset Intelligence</label>
+              <Select
+                isMulti
+                options={symbolOptions}
+                styles={customSelectStyles}
+                placeholder="Find Tickers..."
+                onChange={(newValue: MultiValue<Option>) => {
+                  setSelected(newValue ? newValue.map(opt => opt.value) : []);
+                }}
+              />
+              <div className="mt-4">
+                <div className="p-3 rounded border" style={{ borderColor: THEME.border, backgroundColor: THEME.bg }}>
+                  <div className="d-flex justify-content-between mb-2">
+                    <span className="small text-white">Network</span>
+                    <span className="small text-success fw-bold">ONLINE</span>
+                  </div>
+                  <div className="d-flex justify-content-between">
+                    <span className="small text-white">Precision</span>
+                    <span className="small text-white">64-BIT</span>
+                  </div>
+                </div>
+                {error && <div className="alert alert-danger p-2 mt-3 small border-0 bg-danger bg-opacity-25 text-danger">{error}</div>}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* MAIN VIEW: CHART & TABLE */}
+        <div className="col-11 col-lg-8">
+          <div className="card border-0 shadow-sm mb-4" style={{ backgroundColor: THEME.card }}>
+            <div className="card-body p-3" style={{ height: '400px' }}>
+              {chartData ? (
+                <Line data={chartData} options={chartOptions} />
+              ) : (
+                <div className="h-100 d-flex flex-column align-items-center justify-content-center text-center opacity-50">
+                  <h6 style={{ color: THEME.muted }}>AWAITING SYMBOL INITIALIZATION</h6>
+                  <p className="small text-muted">Select assets from the sidebar to visualize market trajectory.</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {data.length > 0 && (
+            <div className="card border-0 shadow-sm overflow-hidden" style={{ backgroundColor: THEME.card }}>
+              <div className="table-responsive">
+                <table className="table table-dark table-hover mb-0" style={{ fontSize: '0.85rem' }}>
+                  <thead className="bg-black bg-opacity-25">
+                    <tr>
+                      <th className="px-3 border-0 py-3 text-muted fw-normal">SYMBOL</th>
+                      <th className="border-0 py-3 text-end text-muted fw-normal">OPEN</th>
+                      <th className="border-0 py-3 text-end text-muted fw-normal">HIGH</th>
+                      <th className="border-0 py-3 text-end text-muted fw-normal">LOW</th>
+                      <th className="border-0 py-3 text-end text-muted fw-normal">CLOSE</th>
+                      <th className="border-0 py-3 text-end text-muted fw-normal">VOL (24H)</th>
+                      <th className="border-0 py-3 text-center text-muted fw-normal">SOURCE</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.map((row) => (
+                      <tr key={row.symbol} style={{ borderBottom: `1px solid ${THEME.border}` }}>
+                        <td className="px-3 py-3 fw-bold" style={{ color: THEME.primary }}>{row.symbol}</td>
+                        <td className="text-end py-3">${row.open}</td>
+                        <td className="text-end py-3" style={{ color: THEME.success }}>${row.high}</td>
+                        <td className="text-end py-3" style={{ color: THEME.danger }}>${row.low}</td>
+                        <td className="text-end py-3 fw-bold">${row.close}</td>
+                        <td className="text-end py-3 text-muted">{row.volume}</td>
+                        <td className="text-center py-3">
+                          <span 
+                            className="badge rounded-1" 
+                            style={{ 
+                              fontSize: '0.65rem', 
+                              backgroundColor: row.cached ? 'transparent' : THEME.success,
+                              border: `1px solid ${row.cached ? THEME.border : THEME.success}`,
+                              color: row.cached ? THEME.muted : '#000'
+                            }}
+                          >
+                            {row.cached ? 'DB_CACHE' : 'YAHOO_LIVE'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Simulations
+export default Simulations;
