@@ -32,8 +32,22 @@ function Layout({ children, showSidebar, onLogout, currentUser }: LayoutProps) {
     return assetUrl(normalized, defaultUser)
   }, [currentUser])
 
+  const colors = {
+    accentGold: '#f0b90b',
+    headerDark: '#141f38'
+  };
+
   return (
     <div className="d-flex flex-column min-vh-100">
+      <style>
+        {`
+          .custom-dropdown-toggle::after {
+            color: ${colors.accentGold} !important;
+            vertical-align: middle;
+            margin-left: 0.5rem;
+          }
+        `}
+      </style>
       <div className="d-flex flex-grow-1 align-items-stretch" style={{ minHeight: 0 }}>
         {showSidebar && (
           <div className="d-flex align-self-stretch" style={{ minHeight: 0 }}>
@@ -48,7 +62,7 @@ function Layout({ children, showSidebar, onLogout, currentUser }: LayoutProps) {
         )}
         <div className="flex-grow-1 d-flex flex-column">
           {showSidebar && (
-            <header className="d-flex align-items-center justify-content-between px-3 py-3 border-bottom bg-white">
+            <header className="d-flex align-items-center justify-content-between px-3 py-3 border-bottom" style={{backgroundColor: colors.headerDark}}>
               <div className="d-flex align-items-center gap-2">
                 <button
                   className="btn btn-outline-secondary d-md-none"
@@ -60,7 +74,7 @@ function Layout({ children, showSidebar, onLogout, currentUser }: LayoutProps) {
               </div>
               <div className="dropdown">
                 <button
-                  className="btn p-0 border-0 bg-transparent dropdown-toggle"
+                  className="btn p-0 border-0 bg-transparent dropdown-toggle custom-dropdown-toggle"
                   type="button"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
@@ -71,22 +85,41 @@ function Layout({ children, showSidebar, onLogout, currentUser }: LayoutProps) {
                     width="44"
                     height="44"
                     className="rounded border"
+                    style={{ borderColor: colors.accentGold + '44' }}
                   />
                 </button>
-                <ul className="dropdown-menu dropdown-menu-end">
+                <ul 
+                  className="dropdown-menu dropdown-menu-end dropdown-menu-dark shadow" 
+                  style={{ 
+                    backgroundColor: '#141f38', 
+                    border: '1px solid #253a66' 
+                  }}
+                >
                   <li>
-                    <Link className="dropdown-item" to="/profile">
+                    <Link 
+                      className="dropdown-item custom-nav-link" 
+                      to="/profile"
+                      style={{ color: '#ffffff' }}
+                    >
                       Profile
                     </Link>
                   </li>
                   <li>
-                    <Link className="dropdown-item" to="/settings">
+                    <Link 
+                      className="dropdown-item custom-nav-link" 
+                      to="/settings"
+                      style={{ color: '#ffffff' }}
+                    >
                       Settings
                     </Link>
                   </li>
-                  <li><hr className="dropdown-divider" /></li>
+                  <li><hr className="dropdown-divider" style={{ backgroundColor: '#253a66' }} /></li>
                   <li>
-                    <button className="dropdown-item text-danger" type="button" onClick={onLogout}>
+                    <button 
+                      className="dropdown-item text-danger" 
+                      type="button" 
+                      onClick={onLogout}
+                    >
                       Log out
                     </button>
                   </li>

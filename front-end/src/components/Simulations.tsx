@@ -282,25 +282,57 @@ function Simulations() {
   return (
     <div className="container-fluid min-vh-100 py-4" style={{ backgroundColor: THEME.bg, color: THEME.text }}>
       <div className="row g-4 justify-content-center">
-        {/* TOP BAR / HEADER */}
         <div className="col-11 d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom pb-3 mb-2" style={{ borderColor: THEME.border }}>
           <div>
             <h1 className="h4 fw-bold mb-0 text-uppercase tracking-tight">Terminal <span style={{ color: THEME.primary }}>Simulations</span></h1>
             <p className="small mb-0" style={{ color: THEME.muted }}>PROPRIETARY TRADING ENGINE v2.6</p>
           </div>
           <div className="d-flex gap-2 mt-3 mt-md-0">
-            <div className="d-flex align-items-center px-3 rounded border" style={{ borderColor: THEME.border, backgroundColor: THEME.card }}>
-              <span className="small fw-bold me-2" style={{ color: THEME.muted }}>RANGE</span>
+            <div 
+              className="d-flex align-items-center px-2 rounded border" 
+              style={{ 
+                borderColor: THEME.border, 
+                backgroundColor: THEME.card,
+                cursor: 'pointer'
+              }}
+            >
+              <span className="small fw-bold ms-1" style={{ color: THEME.muted, whiteSpace: 'nowrap' }}>
+                RANGE
+              </span>
               <select
-                className="form-select form-select-sm border-0 bg-transparent text-white"
+                className="form-select form-select-sm border-0 bg-transparent text-white custom-select-yellow-arrow"
                 value={historyDays}
                 onChange={(e) => setHistoryDays(Number(e.target.value))}
-                style={{ width: '100px', boxShadow: 'none' }}
+                style={{ 
+                  width: 'auto', 
+                  minWidth: '110px',
+                  boxShadow: 'none',
+                  paddingLeft: '8px',
+                  cursor: 'pointer'
+                }}
               >
                 {HISTORY_OPTIONS.map((opt) => (
-                  <option key={opt} value={opt} style={{ backgroundColor: THEME.card }}>{opt} Days</option>
+                  <option key={opt} value={opt} style={{ backgroundColor: THEME.card, color: '#fff' }}>
+                    {opt} Days
+                  </option>
                 ))}
               </select>
+
+              <style>
+                {`
+                  /* Custom yellow arrow for the select */
+                  .custom-select-yellow-arrow {
+                    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23f0b90b' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+                    background-size: 12px 12px;
+                  }
+
+                  /* Ensure the select options don't look weird on different browsers */
+                  select option {
+                    background: ${THEME.card};
+                    color: white;
+                  }
+                `}
+              </style>
             </div>
             <button 
               className="btn btn-sm fw-bold px-4 shadow-sm" 
@@ -360,37 +392,45 @@ function Simulations() {
           </div>
 
           {data.length > 0 && (
-            <div className="card border-0 shadow-sm overflow-hidden" style={{ backgroundColor: THEME.card }}>
+            <div className="card border-0 shadow-lg overflow-hidden" style={{ backgroundColor: THEME.card }}>
               <div className="table-responsive">
-                <table className="table table-dark table-hover mb-0" style={{ fontSize: '0.85rem' }}>
-                  <thead className="bg-black bg-opacity-25">
+                <table className="table table-hover mb-0" style={{ fontSize: '0.85rem', color: THEME.text }}>
+                  <thead style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}>
                     <tr>
-                      <th className="px-3 border-0 py-3 text-muted fw-normal">SYMBOL</th>
-                      <th className="border-0 py-3 text-end text-muted fw-normal">OPEN</th>
-                      <th className="border-0 py-3 text-end text-muted fw-normal">HIGH</th>
-                      <th className="border-0 py-3 text-end text-muted fw-normal">LOW</th>
-                      <th className="border-0 py-3 text-end text-muted fw-normal">CLOSE</th>
-                      <th className="border-0 py-3 text-end text-muted fw-normal">VOL (24H)</th>
-                      <th className="border-0 py-3 text-center text-muted fw-normal">SOURCE</th>
+                      <th className="px-3 border-0 py-3 fw-normal" style={{ color: THEME.muted }}>SYMBOL</th>
+                      <th className="border-0 py-3 text-end fw-normal" style={{ color: THEME.muted }}>OPEN</th>
+                      <th className="border-0 py-3 text-end fw-normal" style={{ color: THEME.muted }}>HIGH</th>
+                      <th className="border-0 py-3 text-end fw-normal" style={{ color: THEME.muted }}>LOW</th>
+                      <th className="border-0 py-3 text-end fw-normal" style={{ color: THEME.muted }}>CLOSE</th>
+                      <th className="border-0 py-3 text-end fw-normal" style={{ color: THEME.muted }}>VOL (24H)</th>
+                      <th className="border-0 py-3 text-center fw-normal" style={{ color: THEME.muted }}>SOURCE</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody style={{ borderTop: 'none' }}>
                     {data.map((row) => (
-                      <tr key={row.symbol} style={{ borderBottom: `1px solid ${THEME.border}` }}>
+                      <tr 
+                        key={row.symbol} 
+                        style={{ 
+                          borderBottom: `1px solid ${THEME.border}`,
+                          transition: 'background-color 0.2s ease'
+                        }}
+                        className="align-middle"
+                      >
                         <td className="px-3 py-3 fw-bold" style={{ color: THEME.primary }}>{row.symbol}</td>
-                        <td className="text-end py-3">${row.open}</td>
+                        <td className="text-end py-3" style={{ color: THEME.text }}>${row.open}</td>
                         <td className="text-end py-3" style={{ color: THEME.success }}>${row.high}</td>
                         <td className="text-end py-3" style={{ color: THEME.danger }}>${row.low}</td>
-                        <td className="text-end py-3 fw-bold">${row.close}</td>
-                        <td className="text-end py-3 text-muted">{row.volume}</td>
+                        <td className="text-end py-3 fw-bold" style={{ color: THEME.text }}>${row.close}</td>
+                        <td className="text-end py-3" style={{ color: THEME.muted }}>{row.volume}</td>
                         <td className="text-center py-3">
                           <span 
                             className="badge rounded-1" 
                             style={{ 
                               fontSize: '0.65rem', 
-                              backgroundColor: row.cached ? 'transparent' : THEME.success,
+                              padding: '0.4em 0.6em',
+                              backgroundColor: row.cached ? 'rgba(132, 142, 156, 0.1)' : `rgba(14, 203, 129, 0.15)`,
                               border: `1px solid ${row.cached ? THEME.border : THEME.success}`,
-                              color: row.cached ? THEME.muted : '#000'
+                              color: row.cached ? THEME.muted : THEME.success
                             }}
                           >
                             {row.cached ? 'DB_CACHE' : 'YAHOO_LIVE'}
@@ -401,6 +441,18 @@ function Simulations() {
                   </tbody>
                 </table>
               </div>
+              <style>
+                {`
+                  .table-hover tbody tr:hover {
+                    background-color: #253a66 !important;
+                    color: white !important;
+                  }
+                  .table {
+                    --bs-table-bg: transparent;
+                    --bs-table-accent-bg: transparent;
+                  }
+                `}
+              </style>
             </div>
           )}
         </div>
