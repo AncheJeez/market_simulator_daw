@@ -135,7 +135,7 @@ public class MarketDataService {
 			);
 
 			String raw = response.getBody();
-			System.out.println(raw);
+			// System.out.println(raw);
 			if (raw == null) {
 				return List.of();
 			}
