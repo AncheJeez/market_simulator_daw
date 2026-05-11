@@ -70,7 +70,7 @@ User: admin
 Password: admin123
 ```
 
-The compose files initialize symbols from:
+The compose files initialize stocks from:
 
 ```text
 back-end/testing-symbols.sql

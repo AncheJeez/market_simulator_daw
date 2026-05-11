@@ -114,13 +114,13 @@ function Simulations() {
           credentials: 'include',
         })
         if (!response.ok) {
-          setError('Failed to load symbols.')
+          setError('Failed to load stocks.')
           return
         }
         const list: SymbolItem[] = await response.json()
         setSymbols(list)
       } catch (err) {
-        setError('Failed to load symbols.')
+        setError('Failed to load stocks.')
       }
     }
 
@@ -174,7 +174,7 @@ function Simulations() {
       const rowsWithData = mappedSeries.filter((item) => item.points.length > 0)
 
       if (!rowsWithData.length) {
-        setError('Yahoo Finance returned no price history for the selected symbols.')
+        setError('Yahoo Finance returned no price history for the selected stocks.')
         return
       }
 
@@ -182,7 +182,7 @@ function Simulations() {
         .filter((item) => item.points.length === 0)
         .map((item) => item.symbol)
       if (missingSymbols.length) {
-        setError(`No Yahoo Finance data returned for: ${missingSymbols.join(', ')}.`)
+        setError(`No Yahoo Finance data returned for these stocks: ${missingSymbols.join(', ')}.`)
       }
 
       setSeries(rowsWithData)
@@ -198,7 +198,7 @@ function Simulations() {
     setError('')
 
     if (!selected.length) {
-      setError('Select at least one symbol.')
+      setError('Select at least one stock.')
       return
     }
 
@@ -263,7 +263,7 @@ function Simulations() {
               <div className="col-lg-12">
                 <div className="mb-3">
                   <label className="form-label small fw-bold text-muted text-uppercase">
-                    Seleccionar Símbolos
+                    Seleccionar Stocks
                   </label>
                   <Select
                     isMulti
@@ -279,7 +279,7 @@ function Simulations() {
                   />
                   
                   <div className="form-text small mt-2">
-                    Puedes seleccionar múltiples activos para comparar en la gráfica.
+                    Puedes seleccionar múltiples stocks para comparar en la gráfica.
                   </div>
                 </div>
               </div>
@@ -312,7 +312,7 @@ function Simulations() {
 
                   {error && <div className="alert alert-danger">{error}</div>}
                   {!error && !data.length && (
-                    <div className="text-muted">Select symbols and load data.</div>
+                    <div className="text-muted">Select stocks and load data.</div>
                   )}
 
                   {data.length > 0 && (
@@ -320,7 +320,7 @@ function Simulations() {
                       <table className="table table-sm align-middle">
                         <thead>
                           <tr>
-                            <th>Symbol</th>
+                            <th>Stock</th>
                             <th>Name</th>
                             <th>Date</th>
                             <th>Open</th>
