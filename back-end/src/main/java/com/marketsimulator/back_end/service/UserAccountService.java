@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,7 +32,7 @@ public class UserAccountService {
 	public List<UserResponse> getAllUsers() {
 		return repository.findAll().stream()
 			.map(user -> new UserResponse(user.getId(), user.getUserName(), user.getFirstName(),
-				user.getSecondName(), user.getUserType().name(), user.getProfilePicturePath()))
+				user.getSecondName(), user.getEmail(), user.getBornDate(), user.getUserType().name(), user.getProfilePicturePath()))
 			.collect(Collectors.toList());
 	}
 
@@ -43,13 +44,13 @@ public class UserAccountService {
 	}
 
 	@Transactional
-	public UserAccount register(String firstName, String secondName, String userName, UserType userType,
+	public UserAccount register(String firstName, String secondName, String userName, String email, LocalDate bornDate, UserType userType,
 		String rawPassword, MultipartFile profilePicture) {
 		if (repository.existsByUserName(userName)) {
 			throw new DuplicateUserException("User name already exists.");
 		}
 		String passwordHash = passwordEncoder.encode(rawPassword);
-		UserAccount user = new UserAccount(firstName, secondName, userName, userType, passwordHash, null);
+		UserAccount user = new UserAccount(firstName, secondName, userName, email, bornDate, userType, passwordHash, null);
 		UserAccount saved = repository.save(user);
 		if (profilePicture != null && !profilePicture.isEmpty()) {
 			String profilePath = storeProfilePicture(profilePicture, saved.getId(), saved.getUserName(), null);
@@ -65,7 +66,7 @@ public class UserAccountService {
 	}
 
 	@Transactional
-	public UserAccount adminUpdateUser(Long id, String firstName, String secondName, String userName,
+	public UserAccount adminUpdateUser(Long id, String firstName, String secondName, String userName, String email, LocalDate bornDate,
 		UserType userType, String currentPassword, String newPassword, MultipartFile profilePicture) {
 		UserAccount user = repository.findById(id)
 			.orElseThrow(() -> new InvalidUserInputException("User not found."));
@@ -78,6 +79,8 @@ public class UserAccountService {
 		}
 
 		if (firstName != null) user.setFirstName(firstName.trim());
+		if (email != null) user.setEmail(email.trim());
+		if (bornDate != null) user.setBornDate(bornDate);
 		if (secondName != null) user.setSecondName(secondName.trim());
 		if (userType != null) user.setUserType(userType);
 
@@ -109,7 +112,7 @@ public class UserAccountService {
 	}
 
 	@Transactional
-	public UserAccount updateProfile(Long id, String firstName, String secondName, MultipartFile profilePicture) {
+	public UserAccount updateProfile(Long id, String firstName, String secondName, String email, LocalDate bornDate, MultipartFile profilePicture) {
 		UserAccount user = repository.findById(id)
 			.orElseThrow(() -> new InvalidUserInputException("User not found."));
 
@@ -118,6 +121,12 @@ public class UserAccountService {
 		}
 		if (secondName != null && !secondName.isBlank()) {
 			user.setSecondName(secondName.trim());
+		}
+		if (email != null && !email.isBlank()) {
+			user.setEmail(email.trim());
+		}
+		if (bornDate != null) {
+			user.setBornDate(bornDate);
 		}
 		if (profilePicture != null && !profilePicture.isEmpty()) {
 			String profilePath = storeProfilePicture(profilePicture, user.getId(), user.getUserName(),

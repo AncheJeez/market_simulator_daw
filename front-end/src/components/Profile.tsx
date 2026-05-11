@@ -14,6 +14,8 @@ function Profile({ user, onUpdate }: ProfileProps) {
   const navigate = useNavigate()
   const [firstName, setFirstName] = useState(user?.firstName || '')
   const [secondName, setSecondName] = useState(user?.secondName || '')
+  const [email, setEmail] = useState(user?.email || '')
+  const [bornDate, setBornDate] = useState(user?.bornDate || '')
   const [profilePicture, setProfilePicture] = useState<File | null>(null)
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
@@ -33,6 +35,8 @@ function Profile({ user, onUpdate }: ProfileProps) {
     const formData = new FormData()
     formData.append('firstName', firstName)
     formData.append('secondName', secondName)
+    formData.append('email', email)
+    formData.append('bornDate', bornDate)
     if (profilePicture) {
       formData.append('profilePicture', profilePicture)
     }
@@ -107,6 +111,26 @@ function Profile({ user, onUpdate }: ProfileProps) {
                   type="text"
                   value={secondName}
                   onChange={(event) => setSecondName(event.target.value)}
+                  required
+                />
+              </label>
+                            <label className="form-label">
+                Email
+                <input
+                  className="form-control"
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  required
+                />
+              </label>
+              <label className="form-label">
+                Born Date
+                <input
+                  className="form-control"
+                  type="date"
+                  value={bornDate}
+                  onChange={(event) => setBornDate(event.target.value)}
                   required
                 />
               </label>

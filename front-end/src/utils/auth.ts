@@ -6,6 +6,8 @@ export type User = {
   userName: string
   firstName: string
   secondName: string
+  email: string
+  bornDate: string
   userType: string
   profilePicturePath?: string | null
 }

@@ -8,6 +8,8 @@ function Register() {
   const [firstName, setFirstName] = useState('')
   const [secondName, setSecondName] = useState('')
   const [userName, setUserName] = useState('')
+  const [email, setEmail] = useState('')
+  const [bornDate, setBornDate] = useState('')
   const [userType, setUserType] = useState('NORMAL')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -33,6 +35,8 @@ function Register() {
     formData.append('firstName', firstName)
     formData.append('secondName', secondName)
     formData.append('userName', userName)
+    formData.append('email', email)
+    formData.append('bornDate', bornDate)
     formData.append('userType', userType)
     formData.append('password', password)
     if (profilePicture) {
@@ -88,6 +92,26 @@ function Register() {
                   type="text"
                   value={secondName}
                   onChange={(event) => setSecondName(event.target.value)}
+                  required
+                />
+              </label>
+                            <label className="form-label">
+                Email
+                <input
+                  className="form-control"
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  required
+                />
+              </label>
+              <label className="form-label">
+                Born Date
+                <input
+                  className="form-control"
+                  type="date"
+                  value={bornDate}
+                  onChange={(event) => setBornDate(event.target.value)}
                   required
                 />
               </label>

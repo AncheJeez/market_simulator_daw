@@ -14,6 +14,8 @@ function UserDetail() {
   const [firstName, setFirstName] = useState("");
   const [secondName, setSecondName] = useState("");
   const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [bornDate, setBornDate] = useState("");
   const [userType, setUserType] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -32,6 +34,8 @@ function UserDetail() {
           setFirstName(data.firstName);
           setSecondName(data.secondName);
           setUserName(data.userName);
+          setEmail(data.email);
+          setBornDate(data.bornDate);
           setUserType(data.userType);
         } else {
           setError("Failed to fetch user details.");
@@ -59,6 +63,8 @@ function UserDetail() {
     formData.append("firstName", firstName);
     formData.append("secondName", secondName);
     formData.append("userName", userName);
+    formData.append("email", email);
+    formData.append("bornDate", bornDate);
     formData.append("userType", userType);
     if (newPassword) {
       formData.append("currentPassword", currentPassword);
@@ -137,6 +143,14 @@ function UserDetail() {
             <div className="mb-3">
               <label className="form-label">Second Name</label>
               <input className="form-control" value={secondName} onChange={e => setSecondName(e.target.value)} />
+            </div>
+                        <div className="mb-3">
+              <label className="form-label">Email</label>
+              <input type="email" className="form-control" value={email} onChange={e => setEmail(e.target.value)} />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Born Date</label>
+              <input type="date" className="form-control" value={bornDate} onChange={e => setBornDate(e.target.value)} />
             </div>
             <div className="mb-3">
               <label className="form-label">Username</label>

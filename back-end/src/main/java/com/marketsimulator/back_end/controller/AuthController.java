@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import java.time.LocalDate;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,20 +53,22 @@ public class AuthController {
 
 	@PostMapping("/register")
 	public ResponseEntity<?> register(@RequestParam("firstName") String firstName,
+		@RequestParam("email") String email,
+		@RequestParam("bornDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate bornDate,
 		@RequestParam("secondName") String secondName,
 		@RequestParam("userName") String userName,
 		@RequestParam("userType") UserType userType,
 		@RequestParam("password") String password,
 		@RequestParam(value = "profilePicture", required = false) MultipartFile profilePicture) {
-		if (isBlank(firstName) || isBlank(secondName) || isBlank(userName) || isBlank(password)) {
+		if (isBlank(firstName) || isBlank(secondName) || isBlank(userName) || isBlank(email) || isBlank(password)) {
 			return ResponseEntity.badRequest().body(Map.of("message", "All fields are required."));
 		}
 		try {
-			var created = service.register(firstName.trim(), secondName.trim(), userName.trim(), userType,
+			var created = service.register(firstName.trim(), secondName.trim(), userName.trim(), email.trim(), bornDate, userType,
 				password, profilePicture);
 			return ResponseEntity.status(HttpStatus.CREATED)
 				.body(new UserResponse(created.getId(), created.getUserName(), created.getFirstName(),
-					created.getSecondName(), created.getUserType().name(), created.getProfilePicturePath()));
+					created.getSecondName(), created.getEmail(), created.getBornDate(), created.getUserType().name(), created.getProfilePicturePath()));
 		} catch (DuplicateUserException ex) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", ex.getMessage()));
 		} catch (InvalidUserInputException ex) {
@@ -97,7 +101,7 @@ public class AuthController {
 		}
 		return repository.findByUserName(request.userName().trim())
 			.<ResponseEntity<?>>map(user -> ResponseEntity.ok(new UserResponse(user.getId(), user.getUserName(),
-				user.getFirstName(), user.getSecondName(), user.getUserType().name(), user.getProfilePicturePath())))
+				user.getFirstName(), user.getSecondName(), user.getEmail(), user.getBornDate(), user.getUserType().name(), user.getProfilePicturePath())))
 			.orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 				.body(Map.of("message", "Invalid credentials.")));
 	}
@@ -122,7 +126,7 @@ public class AuthController {
 		String userName = authentication.getName();
 		return repository.findByUserName(userName)
 			.<ResponseEntity<?>>map(user -> ResponseEntity.ok(new UserResponse(user.getId(), user.getUserName(),
-				user.getFirstName(), user.getSecondName(), user.getUserType().name(), user.getProfilePicturePath())))
+				user.getFirstName(), user.getSecondName(), user.getEmail(), user.getBornDate(), user.getUserType().name(), user.getProfilePicturePath())))
 			.orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
 	}
 

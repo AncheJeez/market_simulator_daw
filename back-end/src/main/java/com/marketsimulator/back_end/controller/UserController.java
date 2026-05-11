@@ -1,8 +1,10 @@
 package com.marketsimulator.back_end.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,7 +30,6 @@ import com.marketsimulator.back_end.service.UserAccountService;
 @RequestMapping("/api/users")
 @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class UserController {
-
 	private final UserAccountRepository repository;
 	private final UserAccountService service;
 
@@ -46,41 +47,25 @@ public class UserController {
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getById(@PathVariable Long id) {
 		return repository.findById(id)
-			.<ResponseEntity<?>>map(user -> ResponseEntity.ok(
-				new UserResponse(
-					user.getId(),
-					user.getUserName(),
-					user.getFirstName(),
-					user.getSecondName(),
-					user.getUserType().name(),
-					user.getProfilePicturePath()
-				)
-			))
+			.<ResponseEntity<?>>map(user -> ResponseEntity.ok(new UserResponse(user.getId(),
+				user.getUserName(), user.getFirstName(), user.getSecondName(), user.getEmail(), user.getBornDate(),
+				user.getUserType().name(), user.getProfilePicturePath())))
 			.orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
 				.body(Map.of("message", "User not found.")));
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateProfile(
-		@PathVariable Long id,
+	public ResponseEntity<?> updateProfile(@PathVariable Long id,
 		@RequestParam("firstName") String firstName,
 		@RequestParam("secondName") String secondName,
-		@RequestParam(value = "profilePicture", required = false) MultipartFile profilePicture
-	) {
+		@RequestParam("email") String email,
+		@RequestParam("bornDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate bornDate,
+		@RequestParam(value = "profilePicture", required = false) MultipartFile profilePicture) {
 		try {
-			var updated = service.updateProfile(id, firstName, secondName, profilePicture);
-
-			return ResponseEntity.ok(
-				new UserResponse(
-					updated.getId(),
-					updated.getUserName(),
-					updated.getFirstName(),
-					updated.getSecondName(),
-					updated.getUserType().name(),
-					updated.getProfilePicturePath()
-				)
-			);
-
+			var updated = service.updateProfile(id, firstName, secondName, email, bornDate, profilePicture);
+			return ResponseEntity.ok(new UserResponse(updated.getId(), updated.getUserName(),
+				updated.getFirstName(), updated.getSecondName(), updated.getEmail(), updated.getBornDate(),
+				updated.getUserType().name(), updated.getProfilePicturePath()));
 		} catch (InvalidUserInputException ex) {
 			return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
 		} catch (StorageException ex) {
@@ -91,41 +76,23 @@ public class UserController {
 
 	@PutMapping("/{id}/admin")
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<?> adminUpdate(
-		@PathVariable Long id,
+	public ResponseEntity<?> adminUpdate(@PathVariable Long id,
 		@RequestParam(value = "firstName", required = false) String firstName,
 		@RequestParam(value = "secondName", required = false) String secondName,
 		@RequestParam(value = "userName", required = false) String userName,
+		@RequestParam(value = "email", required = false) String email,
+		@RequestParam(value = "bornDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate bornDate,
 		@RequestParam(value = "userType", required = false) String userType,
 		@RequestParam(value = "currentPassword", required = false) String currentPassword,
 		@RequestParam(value = "newPassword", required = false) String newPassword,
-		@RequestParam(value = "profilePicture", required = false) MultipartFile profilePicture
-	) {
+		@RequestParam(value = "profilePicture", required = false) MultipartFile profilePicture) {
 		try {
 			UserType type = userType != null ? UserType.valueOf(userType) : null;
-
-			var updated = service.adminUpdateUser(
-				id,
-				firstName,
-				secondName,
-				userName,
-				type,
-				currentPassword,
-				newPassword,
-				profilePicture
-			);
-
-			return ResponseEntity.ok(
-				new UserResponse(
-					updated.getId(),
-					updated.getUserName(),
-					updated.getFirstName(),
-					updated.getSecondName(),
-					updated.getUserType().name(),
-					updated.getProfilePicturePath()
-				)
-			);
-
+			var updated = service.adminUpdateUser(id, firstName, secondName, userName, email, bornDate, type,
+				currentPassword, newPassword, profilePicture);
+			return ResponseEntity.ok(new UserResponse(updated.getId(), updated.getUserName(),
+				updated.getFirstName(), updated.getSecondName(), updated.getEmail(), updated.getBornDate(),
+				updated.getUserType().name(), updated.getProfilePicturePath()));
 		} catch (IllegalArgumentException ex) {
 			return ResponseEntity.badRequest().body(Map.of("message", "Invalid user type."));
 		} catch (DuplicateUserException ex) {

@@ -1,5 +1,6 @@
 package com.marketsimulator.back_end.model;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -31,6 +32,12 @@ public class UserAccount {
 	@Column(name = "user_name", nullable = false, unique = true, length = 80)
 	private String userName;
 
+	@Column(name = "email", nullable = false, unique = true, length = 150)
+	private String email;
+
+	@Column(name = "born_date")
+	private LocalDate bornDate;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "user_type", nullable = false, length = 20)
 	private UserType userType;
@@ -44,11 +51,13 @@ public class UserAccount {
 	protected UserAccount() {
 	}
 
-	public UserAccount(String firstName, String secondName, String userName, UserType userType,
-		String passwordHash, String profilePicturePath) {
+	public UserAccount(String firstName, String secondName, String userName, String email, LocalDate bornDate, 
+		UserType userType, String passwordHash, String profilePicturePath) {
 		this.firstName = firstName;
 		this.secondName = secondName;
 		this.userName = userName;
+		this.email = email;
+		this.bornDate = bornDate;
 		this.userType = userType;
 		this.passwordHash = passwordHash;
 		this.profilePicturePath = profilePicturePath;
@@ -74,6 +83,14 @@ public class UserAccount {
 		return userName;
 	}
 
+	public String getEmail() {
+		return email;
+	}
+
+	public LocalDate getBornDate() {
+		return bornDate;
+	}
+
 	public UserType getUserType() {
 		return userType;
 	}
@@ -96,6 +113,14 @@ public class UserAccount {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public void setBornDate(LocalDate bornDate) {
+		this.bornDate = bornDate;
 	}
 
 	public void setUserType(UserType userType) {
