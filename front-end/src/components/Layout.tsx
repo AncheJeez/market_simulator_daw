@@ -34,13 +34,17 @@ function Layout({ children, showSidebar, onLogout, currentUser }: LayoutProps) {
 
   const colors = {
     accentGold: '#f0b90b',
-    headerDark: '#141f38'
+    headerEnd: '#141f38',
+    headerStart: '#1a2949'
   };
 
   return (
     <div className="d-flex flex-column min-vh-100">
       <style>
         {`
+          .custom-header-gradient {
+            background: linear-gradient(90deg, ${colors.headerStart} 0%, ${colors.headerEnd} 100%);
+          }
           .custom-dropdown-toggle::after {
             color: ${colors.accentGold} !important;
             vertical-align: middle;
@@ -62,7 +66,7 @@ function Layout({ children, showSidebar, onLogout, currentUser }: LayoutProps) {
         )}
         <div className="flex-grow-1 d-flex flex-column">
           {showSidebar && (
-            <header className="d-flex align-items-center justify-content-between px-3 py-3 border-bottom" style={{backgroundColor: colors.headerDark}}>
+            <header className="d-flex align-items-center justify-content-between px-3 py-3 border-bottom custom-header-gradient">
               <div className="d-flex align-items-center gap-2">
                 <button
                   className="btn btn-outline-secondary d-md-none"
