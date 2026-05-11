@@ -1,14 +1,16 @@
 import { Sidebar as ProSidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar'
 import { Link } from 'react-router-dom'
+import { User } from '../utils/auth'
 
 type SidebarProps = {
+  currentUser: User | null
   toggled: boolean
   collapsed: boolean
   onToggle: (value: boolean) => void
   onCollapseToggle: (value: boolean) => void
 }
 
-function Sidebar({ toggled, collapsed, onToggle, onCollapseToggle }: SidebarProps) {
+function Sidebar({ toggled, collapsed, onToggle, onCollapseToggle, currentUser }: SidebarProps) {
   return (
     <div className="d-flex flex-column h-100" style={{ flex: '1 1 auto' }}>
       <ProSidebar
@@ -49,7 +51,10 @@ function Sidebar({ toggled, collapsed, onToggle, onCollapseToggle }: SidebarProp
           }}
         >
           <MenuItem component={<Link to="/" />}>Home</MenuItem>
-          <MenuItem component={<Link to="/dashboard" />}>Dashboard</MenuItem>
+                    <MenuItem component={<Link to="/dashboard" />}>Dashboard</MenuItem>
+          {currentUser?.userType === 'ADMIN' && (
+            <MenuItem component={<Link to="/admin" />}>Administration</MenuItem>
+          )}
           <SubMenu label="Market">
             <MenuItem component={<Link to="/market/simulations" />}>Simulations</MenuItem>
             <MenuItem component={<Link to="/market/stored" />}>Stored</MenuItem>

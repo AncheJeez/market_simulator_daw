@@ -42,6 +42,7 @@ function Layout({ children, showSidebar, onLogout, currentUser }: LayoutProps) {
               collapsed={collapsed}
               onToggle={setToggled}
               onCollapseToggle={setCollapsed}
+              currentUser={currentUser}
             />
           </div>
         )}

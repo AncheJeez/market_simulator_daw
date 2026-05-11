@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +26,13 @@ public class UserAccountService {
 	private final UserAccountRepository repository;
 	private final PasswordEncoder passwordEncoder;
 	private final Path uploadRoot;
+
+	public List<UserResponse> getAllUsers() {
+		return repository.findAll().stream()
+			.map(user -> new UserResponse(user.getId(), user.getUserName(), user.getFirstName(),
+				user.getSecondName(), user.getUserType().name(), user.getProfilePicturePath()))
+			.collect(Collectors.toList());
+	}
 
 	public UserAccountService(UserAccountRepository repository, PasswordEncoder passwordEncoder,
 		@Value("${app.uploads.profile-pictures}") String uploadRoot) {

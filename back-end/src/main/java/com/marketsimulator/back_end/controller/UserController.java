@@ -1,5 +1,6 @@
 package com.marketsimulator.back_end.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,11 @@ import com.marketsimulator.back_end.service.UserAccountService;
 public class UserController {
 	private final UserAccountRepository repository;
 	private final UserAccountService service;
+
+	@GetMapping
+	public ResponseEntity<List<UserResponse>> getAll() {
+		return ResponseEntity.ok(service.getAllUsers());
+	}
 
 	public UserController(UserAccountRepository repository, UserAccountService service) {
 		this.repository = repository;

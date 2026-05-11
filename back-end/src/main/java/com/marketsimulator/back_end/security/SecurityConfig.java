@@ -38,6 +38,7 @@ public class SecurityConfig {
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 				.requestMatchers(HttpMethod.GET, "/api/symbols", "/api/market-data").permitAll()
+				.requestMatchers(HttpMethod.GET, "/api/users").hasRole("ADMIN")
 				.anyRequest().authenticated()
 			);
 		return http.build();
