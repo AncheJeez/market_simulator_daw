@@ -49,7 +49,7 @@ public class UserController {
 		return repository.findById(id)
 			.<ResponseEntity<?>>map(user -> ResponseEntity.ok(new UserResponse(user.getId(),
 				user.getUserName(), user.getFirstName(), user.getSecondName(), user.getEmail(), user.getBornDate(),
-				user.getUserType().name(), user.getProfilePicturePath())))
+				user.getUserType().name(), user.getCurrency(), user.getProfilePicturePath())))
 			.orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
 				.body(Map.of("message", "User not found.")));
 	}

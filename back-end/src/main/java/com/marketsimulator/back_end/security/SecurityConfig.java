@@ -31,6 +31,7 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 				.requestMatchers("/api/auth/**").permitAll()
 				.requestMatchers(HttpMethod.GET, "/api/symbols", "/api/market-data").permitAll()
+				.requestMatchers(HttpMethod.POST, "/api/orders/preview").permitAll()
 				.anyRequest().authenticated()
 			);
 		return http.build();

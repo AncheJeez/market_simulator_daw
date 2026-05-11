@@ -7,6 +7,8 @@ import Profile from './components/Profile'
 import Settings from './components/Settings'
 import Simulations from './components/Simulations'
 import StoredMarket from './components/StoredMarket'
+import Orders from './components/OrdersView'
+import Positions from './components/Positions'
 import DatabaseDashboard from './components/DatabaseDashboard'
 import AdminDashboard from './components/AdminDashboard'
 import UserDetail from './components/UserDetail'
@@ -34,6 +36,14 @@ function App() {
         <Route
           path="/market/stored"
           element={isLoggedIn ? <StoredMarket /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/trading/orders"
+          element={isLoggedIn ? <Orders /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/trading/positions"
+          element={isLoggedIn ? <Positions /> : <Navigate to="/login" replace />}
         />
         <Route
           path="/dashboard"

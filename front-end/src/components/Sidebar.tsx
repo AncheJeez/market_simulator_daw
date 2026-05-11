@@ -158,8 +158,8 @@ function Sidebar({ toggled, collapsed, onToggle, onCollapseToggle, currentUser }
               <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-414v-306h120v306l-60-56-60 56Zm200 60v-526h120v406L520-354ZM120-216v-344h120v224L120-216Zm0 98 258-258 142 122 224-224h-64v-80h200v200h-80v-64L524-146 382-268 232-118H120Z"/></svg>
             </div>}
           >
-            <MenuItem>Orders</MenuItem>
-            <MenuItem>Positions</MenuItem>
+            <MenuItem component={<Link to="/trading/orders" />} icon={<div style={iconStyle}><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M120-200h720v-480H120v480Zm40-40v-400h640v400H160Zm80-80h200v-240H240v240Zm240 0h320v-240H480v240Z"/></svg></div>}>Orders</MenuItem>
+            <MenuItem component={<Link to="/trading/positions" />} icon={<div style={iconStyle}><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M120-200h720v-480H120v480Zm120-120h480v-240H240v240Zm40-320h120v120H280v-120Zm240 0h120v120H520v-120Z"/></svg></div>}>Positions</MenuItem>
           </SubMenu>
 
           <MenuItem icon={<div style={iconStyle}>

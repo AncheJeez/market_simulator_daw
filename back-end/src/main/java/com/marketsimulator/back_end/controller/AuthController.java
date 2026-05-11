@@ -68,7 +68,7 @@ public class AuthController {
 				password, profilePicture);
 			return ResponseEntity.status(HttpStatus.CREATED)
 				.body(new UserResponse(created.getId(), created.getUserName(), created.getFirstName(),
-					created.getSecondName(), created.getEmail(), created.getBornDate(), created.getUserType().name(), created.getProfilePicturePath()));
+					created.getSecondName(), created.getEmail(), created.getBornDate(), created.getUserType().name(), created.getCurrency(), created.getProfilePicturePath()));
 		} catch (DuplicateUserException ex) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", ex.getMessage()));
 		} catch (InvalidUserInputException ex) {
