@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { apiUrl } from "../utils/api";
 import { User } from "../utils/auth";
+import { useNavigate } from "react-router-dom";
 
 function AdminDashboard() {
+  const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -51,7 +53,7 @@ function AdminDashboard() {
               </thead>
               <tbody>
                 {users.map((user) => (
-                  <tr key={user.id}>
+                  <tr key={user.id} onClick={() => navigate("/admin/user/" + user.id)} style={{ cursor: "pointer" }}>
                     <td>{user.id}</td>
                     <td>{user.userName}</td>
                     <td>{user.firstName}</td>

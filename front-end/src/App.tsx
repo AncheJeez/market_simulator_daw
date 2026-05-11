@@ -9,6 +9,7 @@ import Simulations from './components/Simulations'
 import StoredMarket from './components/StoredMarket'
 import DatabaseDashboard from './components/DatabaseDashboard'
 import AdminDashboard from './components/AdminDashboard'
+import UserDetail from './components/UserDetail'
 import { useAuth } from './utils/auth'
 
 function App() {
@@ -57,6 +58,10 @@ function App() {
                 <Route
           path="/admin"
           element={isLoggedIn && currentUser?.userType === 'ADMIN' ? <AdminDashboard /> : <Navigate to="/" replace />}
+        />
+                <Route
+          path="/admin/user/:id"
+          element={isLoggedIn && currentUser?.userType === 'ADMIN' ? <UserDetail /> : <Navigate to="/" replace />}
         />
         <Route path="*" element={<Navigate to={isLoggedIn ? '/' : '/login'} replace />} />
       </Routes>

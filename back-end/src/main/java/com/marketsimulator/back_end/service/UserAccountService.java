@@ -65,6 +65,50 @@ public class UserAccountService {
 	}
 
 	@Transactional
+	public UserAccount adminUpdateUser(Long id, String firstName, String secondName, String userName,
+		UserType userType, String currentPassword, String newPassword, MultipartFile profilePicture) {
+		UserAccount user = repository.findById(id)
+			.orElseThrow(() -> new InvalidUserInputException("User not found."));
+
+		if (userName != null && !userName.isBlank() && !userName.equals(user.getUserName())) {
+			if (repository.existsByUserName(userName)) {
+				throw new DuplicateUserException("User name already exists.");
+			}
+			user.setUserName(userName.trim());
+		}
+
+		if (firstName != null) user.setFirstName(firstName.trim());
+		if (secondName != null) user.setSecondName(secondName.trim());
+		if (userType != null) user.setUserType(userType);
+
+		if (newPassword != null && !newPassword.isBlank()) {
+			if (currentPassword == null || currentPassword.isBlank()) {
+				throw new InvalidUserInputException("Current password is required to set a new password.");
+			}
+			if (!passwordEncoder.matches(currentPassword, user.getPasswordHash())) {
+				throw new InvalidUserInputException("Invalid current password.");
+			}
+			user.setPasswordHash(passwordEncoder.encode(newPassword));
+		}
+
+		if (profilePicture != null && !profilePicture.isEmpty()) {
+			String profilePath = storeProfilePicture(profilePicture, user.getId(), user.getUserName(),
+				user.getProfilePicturePath());
+			user.setProfilePicturePath(profilePath);
+		}
+
+		return repository.save(user);
+	}
+
+	@Transactional
+	public void deleteUser(Long id) {
+		UserAccount user = repository.findById(id)
+			.orElseThrow(() -> new InvalidUserInputException("User not found."));
+		deleteExisting(user.getProfilePicturePath());
+		repository.delete(user);
+	}
+
+	@Transactional
 	public UserAccount updateProfile(Long id, String firstName, String secondName, MultipartFile profilePicture) {
 		UserAccount user = repository.findById(id)
 			.orElseThrow(() -> new InvalidUserInputException("User not found."));
