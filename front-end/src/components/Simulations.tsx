@@ -15,6 +15,7 @@ import {
   ChartData
 } from 'chart.js';
 import { apiUrl } from '../utils/api';
+import LoadingState from '../components/reusables/LoadingState'; // Imported loading state
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
@@ -110,9 +111,6 @@ const customSelectStyles: StylesConfig<Option, true> = {
   singleValue: (base) => ({ ...base, color: THEME.text }),
 };
 
-/**
- * HELPERS
- */
 function formatPrice(value: number): string {
   return value.toFixed(2);
 }
@@ -139,9 +137,6 @@ function createDataRowsFromSeries(rows: SeriesRow[]): DataRow[] {
   });
 }
 
-/**
- * COMPONENT
- */
 function Simulations() {
   const [symbols, setSymbols] = useState<SymbolItem[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
@@ -320,13 +315,10 @@ function Simulations() {
 
               <style>
                 {`
-                  /* Custom yellow arrow for the select */
                   .custom-select-yellow-arrow {
                     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23f0b90b' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
                     background-size: 12px 12px;
                   }
-
-                  /* Ensure the select options don't look weird on different browsers */
                   select option {
                     background: ${THEME.card};
                     color: white;
@@ -345,7 +337,6 @@ function Simulations() {
           </div>
         </div>
 
-        {/* SIDEBAR: SELECTION */}
         <div className="col-11 col-lg-3">
           <div className="card border-0 shadow-sm" style={{ backgroundColor: THEME.card }}>
             <div className="card-body p-3">
@@ -354,7 +345,7 @@ function Simulations() {
                 isMulti
                 options={symbolOptions}
                 styles={customSelectStyles}
-                placeholder="Find Tickers..."
+                placeholder="Select"
                 onChange={(newValue: MultiValue<Option>) => {
                   setSelected(newValue ? newValue.map(opt => opt.value) : []);
                 }}
@@ -376,11 +367,12 @@ function Simulations() {
           </div>
         </div>
 
-        {/* MAIN VIEW: CHART & TABLE */}
         <div className="col-11 col-lg-8">
           <div className="card border-0 shadow-sm mb-4" style={{ backgroundColor: THEME.card }}>
-            <div className="card-body p-3" style={{ height: '400px' }}>
-              {chartData ? (
+            <div className="card-body p-3 d-flex align-items-center justify-content-center" style={{ height: '400px' }}>
+              {loading ? (
+                <LoadingState message="Synchronizing Market Trajectory" />
+              ) : chartData ? (
                 <Line data={chartData} options={chartOptions} />
               ) : (
                 <div className="h-100 d-flex flex-column align-items-center justify-content-center text-center opacity-50">
@@ -391,7 +383,7 @@ function Simulations() {
             </div>
           </div>
 
-          {data.length > 0 && (
+          {!loading && data.length > 0 && (
             <div className="card border-0 shadow-lg overflow-hidden" style={{ backgroundColor: THEME.card }}>
               <div className="table-responsive">
                 <table className="table table-hover mb-0" style={{ fontSize: '0.85rem', color: THEME.text }}>

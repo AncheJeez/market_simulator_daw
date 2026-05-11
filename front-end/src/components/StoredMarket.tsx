@@ -17,6 +17,19 @@ type StoredStock = {
   records: number
 }
 
+// Updated THEME with lighter, desaturated slate tones
+const THEME = {
+  bg: '#f8fafc',      // Very light slate for page background (if applicable)
+  card: '#334155',    // Lighter Steel Blue/Slate for the main card
+  border: '#475569',  // Lighter border for separation
+  text: '#f1f5f9',    // Brighter off-white for primary text
+  muted: '#94a3b8',   // Lighter gray-blue for secondary text
+  primary: '#fbbf24', // Brighter Gold/Amber
+  success: '#22c55e', // Vibrant Green
+  danger: '#ef4444',  // Vibrant Red
+  hover: '#3e4e63'    // Lighter hover state
+};
+
 type SortKey = 'symbol' | 'name' | 'latestDate' | 'close' | 'priceChange' | 'changePercent' | 'volume' | 'lastFetchedAt'
 
 type SortState = {
@@ -33,9 +46,7 @@ function formatPercent(value: number | null | undefined) {
 }
 
 function formatChange(value: number | null | undefined) {
-  if (value === null || value === undefined) {
-    return '-'
-  }
+  if (value === null || value === undefined) return '-'
   const sign = value > 0 ? '+' : value < 0 ? '-' : ''
   return `${sign}$${Math.abs(value).toFixed(2)}`
 }
@@ -44,20 +55,9 @@ function formatVolume(value: number | null | undefined) {
   return value === null || value === undefined ? '-' : Math.round(value).toLocaleString('en-US')
 }
 
-function movementClass(value: number | null | undefined) {
-  if (value === null || value === undefined || value === 0) {
-    return 'text-muted'
-  }
-  return value > 0 ? 'text-success' : 'text-danger'
-}
-
-function movementBadge(value: number | null | undefined) {
-  if (value === null || value === undefined || value === 0) {
-    return { label: 'Flat', className: 'bg-secondary' }
-  }
-  return value > 0
-    ? { label: 'Raised', className: 'bg-success' }
-    : { label: 'Lowered', className: 'bg-danger' }
+function movementColor(value: number | null | undefined) {
+  if (value === null || value === undefined || value === 0) return THEME.muted
+  return value > 0 ? THEME.success : THEME.danger
 }
 
 function StoredMarket() {
@@ -98,87 +98,114 @@ function StoredMarket() {
   )
 
   const toggleSort = (key: SortKey) => {
-    setSort((prev) => {
-      if (prev.key === key) {
-        return { key, direction: prev.direction === 'asc' ? 'desc' : 'asc' }
-      }
-      return { key, direction: 'asc' }
-    })
-  }
-
-  const renderArrow = (key: SortKey) => {
-    if (sort.key !== key) {
-      return ''
-    }
-    return sort.direction === 'asc' ? ' ^' : ' v'
+    setSort((prev) => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
+    }))
   }
 
   return (
     <div className="row justify-content-center">
+      <style>
+        {`
+          .custom-table-hover tbody tr:hover {
+            background-color: ${THEME.hover} !important;
+          }
+          .table-active-row {
+            background-color: rgba(251, 191, 36, 0.15) !important;
+            border-left: 3px solid ${THEME.primary} !important;
+          }
+          .detail-label { color: ${THEME.muted}; font-weight: 500; }
+          .detail-value { color: ${THEME.text}; text-align: right; }
+          
+          /* Force override for the table container transparency */
+          .table, .table > :not(caption) > * > * {
+            background-color: transparent !important;
+            box-shadow: none !important;
+            border-color: ${THEME.border} !important;
+          }
+        `}
+      </style>
+
       <div className="col-lg-11">
-        <div className="card shadow-sm">
+        <div className="card border-0 shadow-lg" style={{ backgroundColor: THEME.card, color: THEME.text }}>
           <div className="card-body p-4">
-            <div className="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
+            <div className="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
               <div>
-                <h1 className="h3 mb-1">Stored Stocks</h1>
-                <div className="text-muted small">{rows.length} stocks with cached market data</div>
+                <h1 className="h3 mb-1 fw-bold" style={{ color: THEME.primary }}>Stored Stocks</h1>
+                <div style={{ color: THEME.muted, fontSize: '0.85rem' }}>
+                  {rows.length} assets currently indexed in local cache
+                </div>
               </div>
               {selected && (
-                <div className={`text-end ${movementClass(selected.priceChange)}`}>
-                  <div className="fs-4 fw-semibold">{formatPrice(selected.close)}</div>
-                  <div className="small">
+                <div className="text-end">
+                  <div className="fs-3 fw-bold" style={{ color: movementColor(selected.priceChange) }}>
+                    {formatPrice(selected.close)}
+                  </div>
+                  <div className="small fw-medium" style={{ color: movementColor(selected.priceChange) }}>
                     {formatChange(selected.priceChange)} ({formatPercent(selected.changePercent)})
                   </div>
                 </div>
               )}
             </div>
 
-            <div className="row g-3">
+            <div className="row g-4">
               <div className="col-xl-8">
                 <div className="table-responsive">
-                  <table className="table table-sm table-hover align-middle">
-                    <thead>
+                  <table 
+                    className="table align-middle mb-0" 
+                    style={{ 
+                      color: THEME.text,
+                      borderCollapse: 'separate',
+                      borderSpacing: '0'
+                    }}
+                  >
+                    <thead style={{ backgroundColor: 'rgba(0,0,0,0.15)' }}>
                       <tr>
-                        <th role="button" onClick={() => toggleSort('symbol')}>
-                          Stock {renderArrow('symbol')}
-                        </th>
-                        <th role="button" onClick={() => toggleSort('name')}>
-                          Name {renderArrow('name')}
-                        </th>
-                        <th role="button" className="text-end" onClick={() => toggleSort('close')}>
-                          Close {renderArrow('close')}
-                        </th>
-                        <th role="button" className="text-end" onClick={() => toggleSort('priceChange')}>
-                          Change {renderArrow('priceChange')}
-                        </th>
-                        <th role="button" className="text-end" onClick={() => toggleSort('changePercent')}>
-                          Change % {renderArrow('changePercent')}
-                        </th>
-                        <th role="button" onClick={() => toggleSort('latestDate')}>
-                          Date {renderArrow('latestDate')}
-                        </th>
+                        {['symbol', 'name', 'close', 'priceChange', 'changePercent', 'latestDate'].map((k) => (
+                          <th 
+                            key={k}
+                            role="button" 
+                            className="border-0 py-3 px-3"
+                            style={{ 
+                              color: THEME.muted, 
+                              fontSize: '0.75rem', 
+                              textTransform: 'uppercase'
+                            }}
+                            onClick={() => toggleSort(k as SortKey)}
+                          >
+                            <div className={`d-flex align-items-center ${k !== 'symbol' && k !== 'name' && k !== 'latestDate' ? 'justify-content-end' : ''}`}>
+                              {k.replace(/([A-Z])/g, ' $1')}
+                              <span className="ms-1" style={{ color: THEME.primary, width: '10px' }}>
+                                {sort.key === k ? (sort.direction === 'asc' ? '↑' : '↓') : ''}
+                              </span>
+                            </div>
+                          </th>
+                        ))}
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody style={{ borderTop: 'none' }}>
                       {sorted.map((row) => (
                         <tr
                           key={row.symbol}
                           role="button"
-                          className={selected?.symbol === row.symbol ? 'table-active' : ''}
+                          className={selected?.symbol === row.symbol ? 'table-active-row' : ''}
+                          style={{ 
+                            borderBottom: `1px solid ${THEME.border}`,
+                            transition: '0.2s'
+                          }}
                           onClick={() => setSelectedSymbol(row.symbol)}
                         >
-                          <td className="fw-semibold">{row.symbol}</td>
-                          <td>{row.name}</td>
-                          <td className={`text-end fw-semibold ${movementClass(row.priceChange)}`}>
-                            {formatPrice(row.close)}
-                          </td>
-                          <td className={`text-end ${movementClass(row.priceChange)}`}>
+                          <td className="fw-bold py-3 px-3" style={{ color: THEME.primary }}>{row.symbol}</td>
+                          <td className="small" style={{color: '#ffffff'}}>{row.name}</td>
+                          <td className="text-end fw-bold" style={{color: '#ffffff'}}>{formatPrice(row.close)}</td>
+                          <td className="text-end fw-medium" style={{ color: movementColor(row.priceChange) }}>
                             {formatChange(row.priceChange)}
                           </td>
-                          <td className={`text-end ${movementClass(row.changePercent)}`}>
+                          <td className="text-end fw-medium" style={{ color: movementColor(row.changePercent) }}>
                             {formatPercent(row.changePercent)}
                           </td>
-                          <td>{row.latestDate ?? '-'}</td>
+                          <td className="small px-3" style={{ color: THEME.muted }}>{row.latestDate ?? '-'}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -188,54 +215,49 @@ function StoredMarket() {
 
               <div className="col-xl-4">
                 {selected ? (
-                  <div className="border rounded p-3 h-100">
-                    <div className="d-flex align-items-start justify-content-between gap-3 mb-3">
+                  <div className="p-4 rounded border" style={{ borderColor: THEME.border, backgroundColor: 'rgba(255,255,255,0.03)' }}>
+                    <div className="d-flex align-items-start justify-content-between mb-4">
                       <div>
-                        <div className="h4 mb-0">{selected.symbol}</div>
-                        <div className="text-muted">{selected.name}</div>
+                        <div className="h4 mb-0 fw-bold" style={{ color: THEME.primary }}>{selected.symbol}</div>
+                        <div className="small" style={{ color: THEME.muted }}>{selected.name}</div>
                       </div>
-                      <span className={`badge ${movementBadge(selected.priceChange).className}`}>
-                        {movementBadge(selected.priceChange).label}
+                      <span 
+                        className="badge rounded-1" 
+                        style={{ 
+                          backgroundColor: `${movementColor(selected.priceChange)}15`, 
+                          color: movementColor(selected.priceChange),
+                          border: `1px solid ${movementColor(selected.priceChange)}`,
+                          fontSize: '0.7rem',
+                          letterSpacing: '0.5px'
+                        }}
+                      >
+                        {selected.priceChange && selected.priceChange >= 0 ? 'BULLISH' : 'BEARISH'}
                       </span>
                     </div>
 
-                    <dl className="row mb-0 small">
-                      <dt className="col-6 text-muted">Latest date</dt>
-                      <dd className="col-6 text-end">{selected.latestDate ?? '-'}</dd>
-                      <dt className="col-6 text-muted">Open</dt>
-                      <dd className="col-6 text-end">{formatPrice(selected.open)}</dd>
-                      <dt className="col-6 text-muted">High</dt>
-                      <dd className="col-6 text-end text-success">{formatPrice(selected.high)}</dd>
-                      <dt className="col-6 text-muted">Low</dt>
-                      <dd className="col-6 text-end text-danger">{formatPrice(selected.low)}</dd>
-                      <dt className="col-6 text-muted">Close</dt>
-                      <dd className={`col-6 text-end fw-semibold ${movementClass(selected.priceChange)}`}>
-                        {formatPrice(selected.close)}
-                      </dd>
-                      <dt className="col-6 text-muted">Previous close</dt>
-                      <dd className="col-6 text-end">{formatPrice(selected.previousClose)}</dd>
-                      <dt className="col-6 text-muted">Daily change</dt>
-                      <dd className={`col-6 text-end ${movementClass(selected.priceChange)}`}>
-                        {formatChange(selected.priceChange)}
-                      </dd>
-                      <dt className="col-6 text-muted">Daily change %</dt>
-                      <dd className={`col-6 text-end ${movementClass(selected.changePercent)}`}>
-                        {formatPercent(selected.changePercent)}
-                      </dd>
-                      <dt className="col-6 text-muted">Volume</dt>
-                      <dd className="col-6 text-end">{formatVolume(selected.volume)}</dd>
-                      <dt className="col-6 text-muted">Stored records</dt>
-                      <dd className="col-6 text-end">
-                        {(selected.records ?? 0).toLocaleString('en-US')}
-                      </dd>
-                      <dt className="col-6 text-muted">Last fetched</dt>
-                      <dd className="col-6 text-end">
-                        {selected.lastFetchedAt ? new Date(selected.lastFetchedAt).toLocaleString() : '-'}
-                      </dd>
-                    </dl>
+                    <div className="d-flex flex-column gap-2 small">
+                      {[
+                        { label: 'Market Open', value: formatPrice(selected.open) },
+                        { label: 'Daily High', value: formatPrice(selected.high), color: THEME.success },
+                        { label: 'Daily Low', value: formatPrice(selected.low), color: THEME.danger },
+                        { label: 'Prev Close', value: formatPrice(selected.previousClose) },
+                        { label: 'Volume', value: formatVolume(selected.volume) },
+                        { label: 'Cached Records', value: (selected.records ?? 0).toLocaleString() },
+                      ].map((item, idx) => (
+                        <div key={idx} className="d-flex justify-content-between py-2 border-bottom" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
+                          <span className="detail-label">{item.label}</span>
+                          <span className="detail-value fw-bold" style={{ color: item.color || THEME.text }}>{item.value}</span>
+                        </div>
+                      ))}
+                      <div className="mt-3 p-2 rounded text-center" style={{ backgroundColor: 'rgba(0,0,0,0.1)', fontSize: '0.7rem', color: THEME.muted }}>
+                        LAST SYNC: {selected.lastFetchedAt ? new Date(selected.lastFetchedAt).toLocaleString() : 'NEVER'}
+                      </div>
+                    </div>
                   </div>
                 ) : (
-                  <div className="border rounded p-3 text-muted">No stored stocks found.</div>
+                  <div className="p-4 rounded border text-center" style={{ borderColor: THEME.border, color: THEME.muted }}>
+                    Select an asset to view intelligence
+                  </div>
                 )}
               </div>
             </div>

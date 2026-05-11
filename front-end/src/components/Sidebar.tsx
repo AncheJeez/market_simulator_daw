@@ -142,7 +142,11 @@ function Sidebar({ toggled, collapsed, onToggle, onCollapseToggle, currentUser }
               <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M308.5-291.5Q320-303 320-320t-11.5-28.5Q297-360 280-360t-28.5 11.5Q240-337 240-320t11.5 28.5Q263-280 280-280t28.5-11.5ZM240-440h80v-240h-80v240Zm200 160h280v-80H440v80Zm0-160h280v-80H440v80Zm0-160h280v-80H440v80ZM160-120q-33 0-56.5-23.5T80-200v-560q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v560q0 33-23.5 56.5T800-120H160Zm0-80h640v-560H160v560Zm0 0v-560 560Z"/></svg>
             </div>}
           >
-            <MenuItem component={<Link to="/market/simulations" />}>Simulations</MenuItem>
+            <MenuItem component={<Link to="/market/simulations" />}
+              icon={<div style={iconStyle}>
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M320-414v-306h120v306l-60-56-60 56Zm200 60v-526h120v406L520-354ZM120-216v-344h120v224L120-216Zm0 98 258-258 142 122 224-224h-64v-80h200v200h-80v-64L524-146 382-268 232-118H120Z"/></svg>
+              </div>}
+            >Simulations</MenuItem>
             <MenuItem>News</MenuItem>
           </SubMenu>
 
