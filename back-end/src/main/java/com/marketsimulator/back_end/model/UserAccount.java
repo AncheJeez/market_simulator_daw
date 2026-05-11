@@ -1,5 +1,8 @@
 package com.marketsimulator.back_end.model;
 
+import java.util.Collection;
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -8,6 +11,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Entity
 @Table(name = "app_user")
@@ -46,6 +52,10 @@ public class UserAccount {
 		this.userType = userType;
 		this.passwordHash = passwordHash;
 		this.profilePicturePath = profilePicturePath;
+	}
+
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return List.of(new SimpleGrantedAuthority("ROLE_" + userType.name()));
 	}
 
 	public Long getId() {

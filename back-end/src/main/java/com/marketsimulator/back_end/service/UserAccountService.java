@@ -20,6 +20,7 @@ import com.marketsimulator.back_end.exception.StorageException;
 import com.marketsimulator.back_end.model.UserAccount;
 import com.marketsimulator.back_end.model.UserType;
 import com.marketsimulator.back_end.repository.UserAccountRepository;
+import com.marketsimulator.back_end.dto.UserResponse;
 
 @Service
 public class UserAccountService {

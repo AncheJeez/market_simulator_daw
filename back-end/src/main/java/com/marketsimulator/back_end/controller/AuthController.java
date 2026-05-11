@@ -3,6 +3,7 @@ package com.marketsimulator.back_end.controller;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
@@ -10,10 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,17 +34,19 @@ import com.marketsimulator.back_end.service.UserAccountService;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class AuthController {
 	private final UserAccountService service;
 	private final UserAccountRepository repository;
 	private final AuthenticationManager authenticationManager;
+	private final SecurityContextRepository securityContextRepository;
 
 	public AuthController(UserAccountService service, UserAccountRepository repository,
-		AuthenticationManager authenticationManager) {
+		AuthenticationManager authenticationManager, SecurityContextRepository securityContextRepository) {
 		this.service = service;
 		this.repository = repository;
 		this.authenticationManager = authenticationManager;
+		this.securityContextRepository = securityContextRepository;
 	}
 
 	@PostMapping("/register")
@@ -70,8 +76,8 @@ public class AuthController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@org.springframework.web.bind.annotation.RequestBody AuthRequest request,
-		HttpServletRequest httpRequest) {
+	public ResponseEntity<?> login(@RequestBody AuthRequest request,
+		HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
 		if (request.userName() == null || request.userName().isBlank() || request.password() == null
 			|| request.password().isBlank()) {
 			return ResponseEntity.badRequest().body(Map.of("message", "User name and password are required."));
@@ -79,9 +85,12 @@ public class AuthController {
 		try {
 			Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(request.userName().trim(), request.password()));
-			SecurityContextHolder.getContext().setAuthentication(authentication);
-			HttpSession session = httpRequest.getSession(true);
-			session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+			
+			SecurityContext context = SecurityContextHolder.createEmptyContext();
+			context.setAuthentication(authentication);
+			SecurityContextHolder.setContext(context);
+			securityContextRepository.saveContext(context, httpRequest, httpResponse);
+			
 		} catch (Exception ex) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 				.body(Map.of("message", "Invalid credentials."));
