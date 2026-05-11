@@ -6,7 +6,8 @@ INSERT INTO app_user (
     born_date,
     password_hash,
     user_type,
-    profile_picture_path
+    profile_picture_path,
+    currency
 )
 VALUES (
     'Admin',
@@ -16,5 +17,6 @@ VALUES (
     '1990-01-01',
     '$2b$12$6cdleoSsH9EtO.vo2bT84Ohltj4SthGTl5dZbsV0bDXogVEEXuICS',
     'ADMIN',
-    NULL
+    NULL,
+    10000
 );

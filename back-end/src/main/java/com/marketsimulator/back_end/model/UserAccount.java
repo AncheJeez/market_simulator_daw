@@ -48,6 +48,9 @@ public class UserAccount {
 	@Column(name = "profile_picture_path", length = 255)
 	private String profilePicturePath;
 
+	@Column(name = "currency")
+	private long currency = 10000L;
+
 	protected UserAccount() {
 	}
 
@@ -103,6 +106,10 @@ public class UserAccount {
 		return profilePicturePath;
 	}
 
+	public long getCurrency() {
+		return currency;
+	}
+
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
@@ -133,5 +140,9 @@ public class UserAccount {
 
 	public void setProfilePicturePath(String profilePicturePath) {
 		this.profilePicturePath = profilePicturePath;
+	}
+
+	public void setCurrency(long currency) {
+		this.currency = currency;
 	}
 }

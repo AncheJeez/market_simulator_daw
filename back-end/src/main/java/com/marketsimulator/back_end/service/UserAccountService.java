@@ -32,7 +32,7 @@ public class UserAccountService {
 	public List<UserResponse> getAllUsers() {
 		return repository.findAll().stream()
 			.map(user -> new UserResponse(user.getId(), user.getUserName(), user.getFirstName(),
-				user.getSecondName(), user.getEmail(), user.getBornDate(), user.getUserType().name(), user.getProfilePicturePath()))
+				user.getSecondName(), user.getEmail(), user.getBornDate(), user.getUserType().name(), user.getCurrency(), user.getProfilePicturePath()))
 			.collect(Collectors.toList());
 	}
 
