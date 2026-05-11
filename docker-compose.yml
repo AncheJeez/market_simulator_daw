@@ -12,7 +12,6 @@ services:
     command: postgres -c listen_addresses='*'
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./back-end/testing-symbols.sql:/docker-entrypoint-initdb.d/02-symbols.sql
 
   backend:
     build:

@@ -14,7 +14,6 @@ services:
       - "5432:5432"
     volumes:
       - postgres_local_data:/var/lib/postgresql/data
-      - ./back-end/testing-symbols.sql:/docker-entrypoint-initdb.d/02-symbols.sql
 
 volumes:
   postgres_local_data:
