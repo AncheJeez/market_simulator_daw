@@ -52,12 +52,8 @@ function Sidebar({ toggled, collapsed, onToggle, onCollapseToggle, currentUser }
         >
           <MenuItem component={<Link to="/" />}>Home</MenuItem>
                     <MenuItem component={<Link to="/dashboard" />}>Dashboard</MenuItem>
-          {currentUser?.userType === 'ADMIN' && (
-            <MenuItem component={<Link to="/admin" />}>Administration</MenuItem>
-          )}
           <SubMenu label="Market">
             <MenuItem component={<Link to="/market/simulations" />}>Simulations</MenuItem>
-            <MenuItem component={<Link to="/market/stored" />}>Stored</MenuItem>
             <MenuItem>News</MenuItem>
           </SubMenu>
           <SubMenu label="Trading">
@@ -65,6 +61,12 @@ function Sidebar({ toggled, collapsed, onToggle, onCollapseToggle, currentUser }
             <MenuItem>Positions</MenuItem>
           </SubMenu>
           <MenuItem>Portfolio</MenuItem>
+          {currentUser?.userType === 'ADMIN' && (
+            <SubMenu label="Administration">
+              <MenuItem component={<Link to="/admin" />}>Users</MenuItem>
+              <MenuItem component={<Link to="/market/stored" />}>Stored</MenuItem>
+            </SubMenu>
+          )}
         </Menu>
       </ProSidebar>
     </div>
