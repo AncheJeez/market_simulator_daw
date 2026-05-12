@@ -148,16 +148,16 @@ function OrdersView() {
               <div className="mt-3 p-2 rounded" style={{ background: '#0f172a' }}>
                 <div className="d-flex justify-content-between align-items-center">
                   <div>
-                    <div className="small text-muted">Price</div>
-                    <div className="fw-bold">${preview.price.toFixed(2)}</div>
+                    <div className="small text-white">Price</div>
+                    <div className="fw-bold text-white">${preview.price.toFixed(2)}</div>
                   </div>
                   <div>
-                    <div className="small text-muted">Quantity</div>
-                    <div className="fw-bold">{preview.quantity.toFixed(6)}</div>
+                    <div className="small text-white">Quantity</div>
+                    <div className="fw-bold text-white">{preview.quantity.toFixed(6)}</div>
                   </div>
                   <div>
-                    <div className="small text-muted">Invest</div>
-                    <div className="fw-bold">{preview.investAmount.toLocaleString()}</div>
+                    <div className="small text-white">Invest</div>
+                    <div className="fw-bold text-white">{preview.investAmount.toLocaleString()}</div>
                   </div>
                   <div>
                     <button className="btn btn-sm btn-success" onClick={handlePlace} disabled={placing}>{placing ? 'Placing...' : 'Place Order'}</button>
