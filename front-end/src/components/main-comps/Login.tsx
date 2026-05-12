@@ -1,8 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import type { User } from '../utils/auth';
-import { apiUrl } from '../utils/api';
+import type { User } from '../../utils/auth';
+import { apiUrl } from '../../utils/api';
 
 // Mantenemos la misma paleta de colores de Simulations
 const THEME = {

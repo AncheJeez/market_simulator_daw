@@ -3,9 +3,9 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import Footer from './Footer'
-import type { User } from '../utils/auth'
-import defaultUser from '../assets/default-user.jpg'
-import { assetUrl } from '../utils/api'
+import type { User } from '../../utils/auth'
+import defaultUser from '../../assets/default-user.jpg'
+import { assetUrl } from '../../utils/api'
 
 type LayoutProps = {
   children: ReactNode

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { GraphCanvas, darkTheme } from 'reagraph' // Importamos darkTheme para la base
+import { GraphCanvas, darkTheme } from 'reagraph'
 
 type OverviewRow = {
   symbol: string
@@ -30,8 +30,8 @@ type ReagraphDashboardProps = {
 const THEME = {
   card: '#1a2949',
   border: '#2b3139',
-  primary: '#f0b90b', // Amarillo Binance/Trading
-  nodeAsset: '#31d2f2', // Cyan para activos
+  primary: '#f0b90b',
+  nodeAsset: '#31d2f2',
   edge: 'rgba(255, 255, 255, 0.15)',
   text: '#ffffff'
 };
@@ -40,7 +40,6 @@ function ReagraphDashboard({ rows }: ReagraphDashboardProps) {
   const graph = useMemo(() => {
     const rootId = 'db-root'
     
-    // Nodo central: Ahora es el corazón del sistema (Amarillo)
     const nodes: GraphNode[] = [
       { 
         id: rootId, 
@@ -66,7 +65,7 @@ function ReagraphDashboard({ rows }: ReagraphDashboardProps) {
         id: symbolNodeId,
         label: `${row.symbol}\n$${closeValue.toFixed(2)}`,
         size: Math.min(Math.max(scaledSize, 12), 44),
-        fill: '#4e6697' // Azul acero para los activos, contrastando con el fondo
+        fill: '#4e6697'
       })
       
       edges.push({
@@ -87,7 +86,7 @@ function ReagraphDashboard({ rows }: ReagraphDashboardProps) {
         height: 550, 
         overflow: 'hidden', 
         position: 'relative',
-        backgroundColor: 'rgba(0, 0, 0, 0.2)', // Fondo ligeramente más oscuro que la card
+        backgroundColor: 'rgba(0, 0, 0, 0.2)',
         borderRadius: '8px',
         border: `1px solid ${THEME.border}`
       }}
@@ -104,14 +103,11 @@ function ReagraphDashboard({ rows }: ReagraphDashboardProps) {
           },
           node: {
             ...darkTheme.node,
-            fill: '#4e6697', // Color por defecto para nodos
+            fill: '#4e6697',
             label: {
               ...darkTheme.node.label,
               color: THEME.text,
               activeColor: THEME.primary,
-              // Si TS sigue quejándose de fontSize aquí, es que tu versión
-              // espera que se configure en el componente, no en el tema.
-              // Pero para forzarlo sin errores:
               ...({ fontSize: 10 } as any) 
             }
           },

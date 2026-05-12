@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { apiUrl } from '../utils/api';
+import { apiUrl } from '../../utils/api';
 
 const THEME = {
   bg: '#0f172a',
