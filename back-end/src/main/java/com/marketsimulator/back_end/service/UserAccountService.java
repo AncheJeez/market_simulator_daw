@@ -44,19 +44,33 @@ public class UserAccountService {
 	}
 
 	@Transactional
-	public UserAccount register(String firstName, String secondName, String userName, String email, LocalDate bornDate, UserType userType,
-		String rawPassword, MultipartFile profilePicture) {
+	public UserAccount register(String firstName, String secondName, String userName, 
+							String email, LocalDate bornDate, String rawPassword, 
+							MultipartFile profilePicture) {
+		
 		if (repository.existsByUserName(userName)) {
 			throw new DuplicateUserException("User name already exists.");
 		}
 		String passwordHash = passwordEncoder.encode(rawPassword);
-		UserAccount user = new UserAccount(firstName, secondName, userName, email, bornDate, userType, passwordHash, null);
+
+		UserAccount user = new UserAccount(
+			firstName, 
+			secondName, 
+			userName, 
+			email, 
+			bornDate, 
+			UserType.NORMAL, // Asignación interna obligatoria
+			passwordHash, 
+			null
+		);
+
 		UserAccount saved = repository.save(user);
 		if (profilePicture != null && !profilePicture.isEmpty()) {
 			String profilePath = storeProfilePicture(profilePicture, saved.getId(), saved.getUserName(), null);
 			saved.setProfilePicturePath(profilePath);
 			return repository.save(saved);
 		}
+		
 		return saved;
 	}
 

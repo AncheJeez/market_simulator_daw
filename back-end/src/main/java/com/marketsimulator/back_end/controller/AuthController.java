@@ -30,7 +30,6 @@ import com.marketsimulator.back_end.dto.UserResponse;
 import com.marketsimulator.back_end.exception.DuplicateUserException;
 import com.marketsimulator.back_end.exception.InvalidUserInputException;
 import com.marketsimulator.back_end.exception.StorageException;
-import com.marketsimulator.back_end.model.UserType;
 import com.marketsimulator.back_end.repository.UserAccountRepository;
 import com.marketsimulator.back_end.service.UserAccountService;
 
@@ -57,14 +56,13 @@ public class AuthController {
 		@RequestParam("bornDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate bornDate,
 		@RequestParam("secondName") String secondName,
 		@RequestParam("userName") String userName,
-		@RequestParam("userType") UserType userType,
 		@RequestParam("password") String password,
 		@RequestParam(value = "profilePicture", required = false) MultipartFile profilePicture) {
 		if (isBlank(firstName) || isBlank(secondName) || isBlank(userName) || isBlank(email) || isBlank(password)) {
 			return ResponseEntity.badRequest().body(Map.of("message", "All fields are required."));
 		}
 		try {
-			var created = service.register(firstName.trim(), secondName.trim(), userName.trim(), email.trim(), bornDate, userType,
+			var created = service.register(firstName.trim(), secondName.trim(), userName.trim(), email.trim(), bornDate,
 				password, profilePicture);
 			return ResponseEntity.status(HttpStatus.CREATED)
 				.body(new UserResponse(created.getId(), created.getUserName(), created.getFirstName(),

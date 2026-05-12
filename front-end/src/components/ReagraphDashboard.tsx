@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { GraphCanvas } from 'reagraph'
+import { GraphCanvas, darkTheme } from 'reagraph' // Importamos darkTheme para la base
 
 type OverviewRow = {
   symbol: string
@@ -27,11 +27,27 @@ type ReagraphDashboardProps = {
   rows: OverviewRow[]
 }
 
+const THEME = {
+  card: '#1a2949',
+  border: '#2b3139',
+  primary: '#f0b90b', // Amarillo Binance/Trading
+  nodeAsset: '#31d2f2', // Cyan para activos
+  edge: 'rgba(255, 255, 255, 0.15)',
+  text: '#ffffff'
+};
+
 function ReagraphDashboard({ rows }: ReagraphDashboardProps) {
   const graph = useMemo(() => {
     const rootId = 'db-root'
+    
+    // Nodo central: Ahora es el corazón del sistema (Amarillo)
     const nodes: GraphNode[] = [
-      { id: rootId, label: 'Database', size: 24, fill: '#0d6efd' },
+      { 
+        id: rootId, 
+        label: 'MARKET ENGINE', 
+        size: 30, 
+        fill: THEME.primary 
+      },
     ]
 
     const edges: GraphEdge[] = []
@@ -45,11 +61,14 @@ function ReagraphDashboard({ rows }: ReagraphDashboardProps) {
       const symbolNodeId = `symbol-${row.symbol}`
       const closeValue = row.latestClose ?? 0
       const scaledSize = closeValue > 0 ? 14 + (closeValue / maxClose) * 30 : 12
+      
       nodes.push({
         id: symbolNodeId,
         label: `${row.symbol}\n$${closeValue.toFixed(2)}`,
         size: Math.min(Math.max(scaledSize, 12), 44),
+        fill: '#4e6697' // Azul acero para los activos, contrastando con el fondo
       })
+      
       edges.push({
         id: `${rootId}-${symbolNodeId}`,
         source: rootId,
@@ -63,16 +82,72 @@ function ReagraphDashboard({ rows }: ReagraphDashboardProps) {
 
   return (
     <div
-      className="border rounded p-3 mt-3"
-      style={{ height: 480, overflow: 'hidden', position: 'relative' }}
+      className="mt-3"
+      style={{ 
+        height: 550, 
+        overflow: 'hidden', 
+        position: 'relative',
+        backgroundColor: 'rgba(0, 0, 0, 0.2)', // Fondo ligeramente más oscuro que la card
+        borderRadius: '8px',
+        border: `1px solid ${THEME.border}`
+      }}
     >
       <GraphCanvas
         nodes={graph.nodes}
         edges={graph.edges}
         layoutType="forceDirected2d"
         labelType="all"
+        theme={{
+          ...darkTheme,
+          canvas: { 
+            background: 'transparent' 
+          },
+          node: {
+            ...darkTheme.node,
+            fill: '#4e6697', // Color por defecto para nodos
+            label: {
+              ...darkTheme.node.label,
+              color: THEME.text,
+              activeColor: THEME.primary,
+              // Si TS sigue quejándose de fontSize aquí, es que tu versión
+              // espera que se configure en el componente, no en el tema.
+              // Pero para forzarlo sin errores:
+              ...({ fontSize: 10 } as any) 
+            }
+          },
+          edge: {
+            ...darkTheme.edge,
+            fill: THEME.edge,
+            label: {
+              ...darkTheme.edge.label,
+              color: 'rgba(255, 255, 255, 0.5)',
+              activeColor: THEME.primary,
+              ...({ fontSize: 8 } as any)
+            }
+          }
+        }}
         animated
       />
+      
+      {/* Overlay sutil de escaneo de radar */}
+      <div className="radar-overlay"></div>
+
+      <style>
+        {`
+          .radar-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: linear-gradient(rgba(240, 185, 11, 0.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(240, 185, 11, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: 2;
+          }
+        `}
+      </style>
     </div>
   )
 }
