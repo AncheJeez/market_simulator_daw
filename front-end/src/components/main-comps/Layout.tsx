@@ -95,7 +95,7 @@ function Layout({ children, showSidebar, onLogout, currentUser }: LayoutProps) {
                 <ul 
                   className="dropdown-menu dropdown-menu-end dropdown-menu-dark shadow" 
                   style={{ 
-                    backgroundColor: '#141f38', 
+                    backgroundColor: '#22345f', 
                     border: '1px solid #253a66' 
                   }}
                 >

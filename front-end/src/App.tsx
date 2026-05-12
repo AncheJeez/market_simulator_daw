@@ -80,14 +80,32 @@ function App() {
           element={
             isLoggedIn ? (
               <div className="container py-4">
+                <div className="d-flex align-items-center mb-4 px-2">
+                  <div 
+                    style={{ 
+                      width: '4px', 
+                      height: '24px', 
+                      backgroundColor: '#f0b90b', 
+                      marginRight: '12px',
+                      borderRadius: '2px' 
+                    }} 
+                  />
+                  <h4 className="mb-0 fw-bold text-white" style={{ letterSpacing: '0.5px' }}>
+                    Trading Hot News
+                  </h4>
+                  <span className="badge ms-3" style={{ backgroundColor: 'rgba(240, 185, 11, 0.1)', color: '#f0b90b', fontSize: '0.7rem' }}>
+                    LIVE FEED
+                  </span>
+                </div>
+
                 {/* News Feed */}
                 <div className="trading-card-entrance mb-4">
-                  <TradingNews type="news" limit={5} />
+                  <TradingNews type="news" limit={15} />
                 </div>
                 
                 {/* Reddit Feed */}
                 <div className="trading-card-entrance" style={{ animationDelay: '0.2s' }}>
-                  <TradingNews type="reddit" limit={5} />
+                  <TradingNews type="reddit" limit={15} />
                 </div>
               </div>
             ) : (

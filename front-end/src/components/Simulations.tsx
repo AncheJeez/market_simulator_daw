@@ -279,8 +279,7 @@ function Simulations() {
       <div className="row g-4 justify-content-center">
         <div className="col-11 d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom pb-3 mb-2" style={{ borderColor: THEME.border }}>
           <div>
-            <h1 className="h4 fw-bold mb-0 text-uppercase tracking-tight">Terminal <span style={{ color: THEME.primary }}>Simulations</span></h1>
-            <p className="small mb-0" style={{ color: THEME.muted }}>PROPRIETARY TRADING ENGINE v2.6</p>
+            <h1 className="h4 fw-bold mb-0 text-uppercase tracking-tight"><span style={{ color: THEME.primary }}>Simulations</span></h1>
           </div>
           <div className="d-flex gap-2 mt-3 mt-md-0">
             <div 
