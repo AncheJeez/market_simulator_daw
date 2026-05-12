@@ -114,7 +114,6 @@ TODO:
 -Apartados de noticias relacionadas con enconomia
 -Seleccionar topics (TECNOLOGÍA Y SEMICONDUCTORES, FINANZAS Y BANCA, CONSUMO Y RETAIL, SALUD Y FARMACÉUTICAS, ENERGÍA E INDUSTRIA,COMUNICACIONES Y ENTRETENIMIENTO, AUTOMOTRIZ Y OTROS, ÍNDICES Y ETFS).
 -Cada topic tiene un chat global para los usuarios, donde se guardan los comentarios.
--Cada usuario tiene 10k de saldo
 -Vista ladder
 -Vista portfolio (current gains and investments), otros usuarios pueden verte esta vista.
 -Vista de trading

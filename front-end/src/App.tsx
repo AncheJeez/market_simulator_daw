@@ -13,6 +13,7 @@ import DatabaseDashboard from './components/DatabaseDashboard'
 import AdminDashboard from './components/AdminDashboard'
 import UserDetail from './components/UserDetail'
 import TradingNews from './components/TradingNews'
+import Portfolio from './components/Portfolio'
 import { useAuth } from './utils/auth'
 
 function App() {
@@ -49,6 +50,10 @@ function App() {
         <Route
           path="/dashboard"
           element={isLoggedIn ? <DatabaseDashboard /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/portfolio"
+          element={isLoggedIn ? <Portfolio /> : <Navigate to="/login" replace />}
         />
         <Route
           path="/login"

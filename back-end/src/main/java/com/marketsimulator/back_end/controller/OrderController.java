@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.marketsimulator.back_end.dto.OrderPreviewResponse;
 import com.marketsimulator.back_end.dto.OrderRequest;
@@ -68,6 +69,32 @@ public class OrderController {
         try {
             List<OrderResponse> list = orderService.listForUser(principal.getName());
             return ResponseEntity.ok(list);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
+        }
+    }
+
+    @GetMapping("/sell-history")
+    public ResponseEntity<?> sellHistory(Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(401).body(Map.of("message", "Not authenticated."));
+        }
+        try {
+            List<com.marketsimulator.back_end.dto.SellHistoryResponse> list = orderService.listSellHistoryForUser(principal.getName());
+            return ResponseEntity.ok(list);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
+        }
+    }
+
+    @PostMapping("/{id}/sell")
+    public ResponseEntity<?> sell(@PathVariable Long id, Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(401).body(Map.of("message", "Not authenticated."));
+        }
+        try {
+            OrderResponse resp = orderService.sell(principal.getName(), id);
+            return ResponseEntity.ok(resp);
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
         }

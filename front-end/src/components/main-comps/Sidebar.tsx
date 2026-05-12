@@ -169,9 +169,10 @@ function Sidebar({ toggled, collapsed, onToggle, onCollapseToggle, currentUser }
             <MenuItem component={<Link to="/trading/positions" />} icon={<div style={iconStyle}><svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor"><path d="M120-200h720v-480H120v480Zm120-120h480v-240H240v240Zm40-320h120v120H280v-120Zm240 0h120v120H520v-120Z"/></svg></div>}>Positions</MenuItem>
           </SubMenu>
 
-          <MenuItem icon={<div style={iconStyle}>
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M160-120q-33 0-56.5-23.5T80-200v-440q0-33 23.5-56.5T160-720h160v-80q0-33 23.5-56.5T400-880h160q33 0 56.5 23.5T640-800v80h160q33 0 56.5 23.5T880-640v440q0 33-23.5 56.5T800-120H160Zm0-80h640v-440H160v440Zm240-520h160v-80H400v80ZM160-200v-440 440Z"/></svg>
-          </div>}>
+          <MenuItem component={<Link to="/portfolio" />} 
+            icon={<div style={iconStyle} >
+              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M160-120q-33 0-56.5-23.5T80-200v-440q0-33 23.5-56.5T160-720h160v-80q0-33 23.5-56.5T400-880h160q33 0 56.5 23.5T640-800v80h160q33 0 56.5 23.5T880-640v440q0 33-23.5 56.5T800-120H160Zm0-80h640v-440H160v440Zm240-520h160v-80H400v80ZM160-200v-440 440Z"/></svg>
+            </div>}>
             Portfolio
           </MenuItem>
 
