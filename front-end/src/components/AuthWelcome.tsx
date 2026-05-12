@@ -1,7 +1,7 @@
 import type { User } from '../utils/auth'
 import defaultUser from '../assets/default-user.jpg'
 import { assetUrl } from '../utils/api'
-import TradingNews from '../components/TradingNews'
+import TradingSocialFeed from '../components/TradingNews'
 
 type AuthWelcomeProps = {
   user: User
@@ -109,7 +109,8 @@ function AuthWelcome({ user }: AuthWelcomeProps) {
       </div>
 
       <div className="trading-card-entrance" style={{ animationDelay: '0.2s' }}>
-        <TradingNews limit={3} />
+        <TradingSocialFeed type="news" limit={3} />
+        <TradingSocialFeed type="reddit" limit={3} />
       </div>
 
       <style>
