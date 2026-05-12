@@ -1,6 +1,7 @@
 import type { User } from '../utils/auth'
 import defaultUser from '../assets/default-user.jpg'
 import { assetUrl } from '../utils/api'
+import TradingNews from '../components/TradingNews'
 
 type AuthWelcomeProps = {
   user: User
@@ -23,7 +24,7 @@ function AuthWelcome({ user }: AuthWelcomeProps) {
   const isAdmin = user?.userType === 'ADMIN';
 
   return (
-    <div className="row justify-content-center px-2">
+    <div className="row justify-content-center px-2 g-4">
       <div className="col-12 col-lg-10 col-xl-8">
         <div 
           className="card border-0 shadow-lg trading-card-entrance overflow-hidden" 
@@ -105,6 +106,10 @@ function AuthWelcome({ user }: AuthWelcomeProps) {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="trading-card-entrance" style={{ animationDelay: '0.2s' }}>
+        <TradingNews limit={3} />
       </div>
 
       <style>
